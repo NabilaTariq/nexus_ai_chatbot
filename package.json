@@ -1,0 +1,27 @@
+{
+  "name": "nexus-ai-chatbot",
+  "version": "1.0.0",
+  "description": "Executive ChatGPT-style AI chatbot with secure backend API integration",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "chatgpt",
+    "gemini",
+    "express"
+  ],
+  "author": "Affinity Zone",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "@supabase/supabase-js": "^2.113.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

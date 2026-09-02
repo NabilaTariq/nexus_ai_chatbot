@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Nexus AI - A sophisticated, high-performance conversational intelligence interface designed with elegance and precision.">
+  <title>Nexus AI — Intelligent Assistant</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Modular CSS Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/composer.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Root App Shell -->
+  <div class="app-container" id="appContainer">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ======================================================================
+         LEFT SIDEBAR
+         ====================================================================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Chat sidebar">
+      
+      <!-- App Brand Logo / Header -->
+      <div class="sidebar-header">
+        <a href="#" class="brand-logo" title="Nexus AI Assistant">
+          <div class="brand-icon-wrapper">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="brand-title">
+            <span class="brand-name">Nexus AI</span>
+            <span class="brand-tagline">Executive Intelligence</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="btnCloseSidebar" title="Close sidebar" aria-label="Close sidebar">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Action: New Chat Button -->
+      <div class="sidebar-actions">
+        <button class="btn-new-chat" id="btnNewChat" title="Start a new conversation">
+          <div class="btn-left">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>New Chat</span>
+          </div>
+          <span class="shortcut-badge">Ctrl+N</span>
+        </button>
+      </div>
+
+      <!-- Chat History Stream -->
+      <div class="sidebar-history" id="sidebarHistory" role="region" aria-label="Conversation history">
+        <!-- Rendered dynamically by js/chat.js -->
+      </div>
+
+      <!-- Sidebar Footer (User Profile & Settings) -->
+      <div class="sidebar-footer">
+        <div class="user-profile" id="userProfileCard" title="User Profile">
+          <div class="user-avatar">AZ</div>
+          <div class="user-info">
+            <div class="user-name">Affinity Zone</div>
+            <div class="user-plan">Pro Tier</div>
+          </div>
+        </div>
+
+        <nav class="footer-nav">
+          <button class="footer-btn" id="btnOpenSettings" title="Open Settings">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+      </div>
+
+    </aside>
+
+    <!-- ======================================================================
+         MAIN CHAT VIEWPORT
+         ====================================================================== -->
+    <main class="main-chat" id="mainChat">
+      
+      <!-- Top Navbar -->
+      <header class="chat-navbar">
+        <div class="navbar-left">
+          <button class="btn-toggle-sidebar" id="btnToggleSidebar" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          <div class="model-selector" id="modelSelectorBadge" title="Current AI Engine">
+            <span class="model-dot"></span>
+            <span id="navbarChatTitle">Nexus 4.0 Pro</span>
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <div class="navbar-right">
+          <button class="btn-nav-action" id="btnClearChat" title="Clear conversation">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Clear</span>
+          </button>
+          <button class="btn-nav-action" id="btnThemeToggle" title="Toggle Dark/Light Mode">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span>Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Chat Stream / Welcome Screen Area -->
+      <div class="chat-scroll-container" id="chatScrollContainer">
+        <div class="chat-content-wrapper">
+          
+          <!-- Clean Welcome Screen (Empty State) -->
+          <section class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-crest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <h1 class="welcome-title">How can <span>Nexus AI</span> assist you?</h1>
+            <p class="welcome-subtitle">Experience high-caliber reasoning, precise coding, and intelligent workflow optimization.</p>
+            
+            <!-- Example Prompt Cards Grid -->
+            <div class="prompt-grid" id="promptGrid">
+              <!-- Rendered dynamically by js/chat.js -->
+            </div>
+          </section>
+
+          <!-- Messages Stream -->
+          <div class="message-list" id="messageList">
+            <!-- Messages rendered dynamically -->
+          </div>
+
+          <!-- Bottom Sentinel Anchor for Auto-Scroll -->
+          <div id="chatBottomAnchor" class="chat-bottom-anchor" aria-hidden="true"></div>
+
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           BOTTOM MESSAGE COMPOSER
+           ==================================================================== -->
+      <footer class="composer-section">
+        <div class="composer-container">
+          
+          <!-- Attachment Preview Bar -->
+          <div class="attachment-preview-bar" id="attachmentPreviewBar">
+            <div class="attachment-chip">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+              </svg>
+              <span id="attachmentFileName">document.pdf</span>
+            </div>
+            <button class="btn-remove-attachment" id="btnRemoveAttachment" title="Remove attachment">✕</button>
+          </div>
+
+          <!-- Composer Card -->
+          <div class="composer-card">
+            <div class="composer-input-row">
+              <textarea 
+                id="composerTextarea" 
+                class="composer-textarea" 
+                placeholder="Ask anything, formulate questions, or paste code..." 
+                rows="1"
+                aria-label="Message prompt input"
+              ></textarea>
+            </div>
+
+            <div class="composer-toolbar">
+              <div class="composer-tools-left">
+                <input type="file" id="fileInput" class="hidden-file-input" accept=".txt,.pdf,.png,.jpg,.jpeg,.py,.js,.json,.csv">
+                <button class="btn-tool" id="btnAttach" title="Attach file or media" type="button">
+                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                  </svg>
+                  <span>Attach</span>
+                </button>
+
+                <button class="btn-tool" id="btnVoiceMock" title="Voice input mode" type="button">
+                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                  </svg>
+                  <span>Voice</span>
+                </button>
+              </div>
+
+              <div class="composer-tools-right">
+                <span class="key-hint">Press <strong>Enter ↵</strong> to send</span>
+                <button class="btn-send" id="btnSend" title="Send message" type="button" aria-label="Send message">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Disclaimer -->
+          <div class="composer-disclaimer">
+            Nexus AI provides simulated intelligent outputs. Verify sensitive facts independently.
+          </div>
+
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- ======================================================================
+         SETTINGS MODAL DIALOG
+         ====================================================================== -->
+    <div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="modalTitle">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Settings & Preferences</span>
+          </div>
+          <button class="btn-close-modal" id="btnCloseSettings" aria-label="Close settings">✕</button>
+        </div>
+
+        <div class="modal-body">
+          
+          <!-- Appearance -->
+          <div class="settings-section">
+            <div class="settings-group-title">Appearance</div>
+            <div class="settings-row">
+              <div class="settings-info">
+                <span class="settings-label">Interface Theme</span>
+                <span class="settings-desc">Choose between Executive Dark and Warm Elegance Light</span>
+              </div>
+              <div class="theme-toggle-group">
+                <button class="theme-opt-btn active" data-theme="dark">Dark Navy</button>
+                <button class="theme-opt-btn" data-theme="light">Warm Beige</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model & Generation -->
+          <div class="settings-section">
+            <div class="settings-group-title">Model Configuration</div>
+            <div class="settings-row">
+              <div class="settings-info">
+                <span class="settings-label">Active Engine</span>
+                <span class="settings-desc">Primary intelligence foundation</span>
+              </div>
+              <select class="settings-select" id="settingsModelSelect">
+                <option value="nexus-4">Nexus 4.0 Pro (Balanced)</option>
+                <option value="nexus-fast">Nexus Flash (Low Latency)</option>
+                <option value="nexus-reason">Nexus Deep Reasoning</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Data Controls -->
+          <div class="settings-section">
+            <div class="settings-group-title">Data & Privacy</div>
+            <div class="settings-row">
+              <div class="settings-info">
+                <span class="settings-label">Clear Conversation History</span>
+                <span class="settings-desc">Permanently remove all cached threads</span>
+              </div>
+              <button class="btn-danger" id="btnClearAllHistory">Clear All</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-modal-cancel" id="btnCancelSettings">Cancel</button>
+          <button class="btn-modal-save" id="btnSaveSettings">Save Preferences</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications Root -->
+    <div class="toast-container" id="toastContainer"></div>
+
+  </div>
+
+  <!-- Application Logic -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

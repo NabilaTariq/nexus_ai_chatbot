@@ -1,0 +1,158 @@
+/* ==========================================================================
+   Responsive Breakpoints & Layout Adaptations - Nexus AI
+   ========================================================================== */
+
+/* Tablet & Mobile Screens (< 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 260px;
+    --max-chat-width: 100%;
+  }
+
+  .chat-scroll-container {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    padding-bottom: 170px;
+  }
+}
+
+/* Mobile Screens (< 768px) */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 290px;
+    --header-height: 56px;
+  }
+
+  /* Off-canvas mobile drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Welcome Screen Mobile */
+  .welcome-screen {
+    padding: var(--space-4) var(--space-2);
+    min-height: calc(100vh - var(--header-height) - 160px);
+  }
+
+  .welcome-crest {
+    width: 58px;
+    height: 58px;
+    margin-bottom: var(--space-4);
+  }
+
+  .welcome-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .welcome-subtitle {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-5);
+  }
+
+  /* Prompt Cards Grid Mobile: Single Column */
+  .prompt-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .prompt-card {
+    padding: var(--space-3);
+  }
+
+  /* Message Rows */
+  .message-body {
+    max-width: 90%;
+  }
+
+  .message-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 0.7rem;
+  }
+
+  .user-message-bubble,
+  .assistant-message-bubble {
+    padding: var(--space-3);
+    font-size: var(--font-size-sm);
+  }
+
+  /* Composer Mobile */
+  .composer-section {
+    padding: 0 var(--space-2) var(--space-2);
+  }
+
+  .composer-card {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .composer-disclaimer {
+    font-size: 0.65rem;
+  }
+
+  .btn-tool span {
+    display: none;
+  }
+
+  .btn-tool {
+    padding: 6px;
+  }
+
+  /* Modal Mobile */
+  .modal-dialog {
+    max-height: 92vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-header, .modal-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .modal-body {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .toast-container {
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
+
+  .toast {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+/* Extra Small Screens (< 420px) */
+@media (max-width: 420px) {
+  .brand-title .brand-tagline {
+    display: none;
+  }
+  
+  .navbar-right .btn-nav-action span {
+    display: none;
+  }
+
+  .message-body {
+    max-width: 94%;
+  }
+}
