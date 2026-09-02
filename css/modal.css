@@ -320,6 +320,11 @@
   line-height: 1.4;
 }
 
+.auth-error-banner:empty,
+.auth-error-banner.hidden {
+  display: none !important;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
