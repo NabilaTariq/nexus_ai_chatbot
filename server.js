@@ -70,6 +70,26 @@ function generateShortTitle(message) {
 }
 
 /**
+ * Helper to authenticate request using Supabase JWT Bearer token
+ * Returns user object { id, email, user_metadata } or null
+ */
+async function getAuthUser(req) {
+  if (!supabase) return null;
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  if (!token) return null;
+
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) return null;
+    return user;
+  } catch (err) {
+    console.warn('Auth token verification error:', err.message);
+    return null;
+  }
+}
+
+/**
  * Health & Configuration Check Endpoint
  * GET /api/health
  */
@@ -81,8 +101,192 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     apiKeyConfigured: hasGeminiKey,
     supabaseConfigured: Boolean(supabase),
-    model: process.env.GEMINI_MODEL || 'gemini-3.6-flash'
+    model: process.env.GEMINI_MODEL || 'gemini-3.5-flash'
   });
+});
+
+/**
+ * --------------------------------------------------------------------------
+ * SUPABASE AUTHENTICATION ENDPOINTS
+ * --------------------------------------------------------------------------
+ */
+
+/**
+ * Sign Up with Email & Password
+ * POST /api/auth/signup
+ * Body: { email, password, fullName }
+ */
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { email, password, fullName } = req.body || {};
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email and password are required.' });
+    }
+    if (!supabase) {
+      return res.status(503).json({ success: false, error: 'Supabase database is not configured.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanFullName = (fullName || '').trim() || cleanEmail.split('@')[0];
+
+    let userResult = null;
+    let authError = null;
+
+    // If Service Role Key is configured, use admin API with email_confirm: true for instant frictionless signup
+    const isServiceRole = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+    if (isServiceRole && supabase.auth.admin) {
+      const { data: adminData, error: adminErr } = await supabase.auth.admin.createUser({
+        email: cleanEmail,
+        password: password,
+        email_confirm: true,
+        user_metadata: {
+          full_name: cleanFullName
+        }
+      });
+
+      if (adminErr) {
+        authError = adminErr;
+      } else {
+        userResult = adminData.user;
+      }
+    } else {
+      const { data, error } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password: password,
+        options: {
+          data: {
+            full_name: cleanFullName
+          }
+        }
+      });
+
+      if (error) {
+        authError = error;
+      } else {
+        userResult = data.user;
+      }
+    }
+
+    if (authError) {
+      return res.status(400).json({ success: false, error: authError.message });
+    }
+
+    // Automatically sign in to get active session JWT token
+    const { data: loginData, error: loginErr } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password: password
+    });
+
+    if (!loginErr && loginData?.session) {
+      return res.json({
+        success: true,
+        user: {
+          id: loginData.user.id,
+          email: loginData.user.email,
+          fullName: loginData.user.user_metadata?.full_name || cleanFullName
+        },
+        session: {
+          access_token: loginData.session.access_token,
+          refresh_token: loginData.session.refresh_token
+        },
+        message: 'Account created and signed in successfully.'
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: userResult ? {
+        id: userResult.id,
+        email: userResult.email,
+        fullName: userResult.user_metadata?.full_name || cleanFullName
+      } : null,
+      session: null,
+      message: 'Account created. Please check your email if confirmation is required.'
+    });
+
+  } catch (err) {
+    console.error('Signup error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Sign In with Email & Password
+ * POST /api/auth/login
+ * Body: { email, password }
+ */
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email and password are required.' });
+    }
+    if (!supabase) {
+      return res.status(503).json({ success: false, error: 'Supabase database is not configured.' });
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password
+    });
+
+    if (error) {
+      return res.status(401).json({ success: false, error: error.message });
+    }
+
+    return res.json({
+      success: true,
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        fullName: data.user.user_metadata?.full_name || data.user.email.split('@')[0]
+      },
+      session: {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token
+      }
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Sign Out
+ * POST /api/auth/logout
+ */
+app.post('/api/auth/logout', async (req, res) => {
+  try {
+    return res.json({ success: true, message: 'Logged out successfully.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Get Current Authenticated User Profile
+ * GET /api/auth/me
+ */
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    const user = await getAuthUser(req);
+    if (!user) {
+      return res.status(401).json({ success: false, authenticated: false, error: 'Not authenticated.' });
+    }
+
+    return res.json({
+      success: true,
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.user_metadata?.full_name || user.email.split('@')[0]
+      }
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 /**
@@ -92,7 +296,7 @@ app.get('/api/health', (req, res) => {
  */
 
 /**
- * Fetch all conversations
+ * Fetch all conversations for the authenticated user
  * GET /api/conversations
  */
 app.get('/api/conversations', async (req, res) => {
@@ -105,10 +309,32 @@ app.get('/api/conversations', async (req, res) => {
       });
     }
 
-    const { data, error } = await supabase
+    const user = await getAuthUser(req);
+    if (!user) {
+      // Guests see clean landing page with empty history
+      return res.json({
+        success: true,
+        conversations: [],
+        storageType: 'guest'
+      });
+    }
+
+    let { data, error } = await supabase
       .from('conversations')
       .select('*')
+      .eq('user_id', user.id)
       .order('updated_at', { ascending: false });
+
+    // Graceful fallback if user_id column has not been added yet in remote Supabase table
+    if (error && error.message && error.message.includes('user_id')) {
+      console.warn('ℹ️ user_id column not found in conversations table. Running fallback query.');
+      const fallback = await supabase
+        .from('conversations')
+        .select('*')
+        .order('updated_at', { ascending: false });
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) {
       console.error('Supabase get conversations error:', error);
@@ -134,6 +360,15 @@ app.get('/api/conversations', async (req, res) => {
  */
 app.post('/api/conversations', async (req, res) => {
   try {
+    const user = await getAuthUser(req);
+    if (!user && supabase) {
+      return res.status(401).json({
+        success: false,
+        error: 'Please login or create an account to start chatting with Nexus AI.',
+        requiresAuth: true
+      });
+    }
+
     const title = (req.body && req.body.title ? req.body.title.trim() : 'New Conversation');
 
     if (!supabase) {
@@ -149,11 +384,26 @@ app.post('/api/conversations', async (req, res) => {
       });
     }
 
-    const { data, error } = await supabase
+    let insertPayload = {
+      title: title,
+      user_id: user ? user.id : null
+    };
+
+    let { data, error } = await supabase
       .from('conversations')
-      .insert([{ title: title }])
+      .insert([insertPayload])
       .select()
       .single();
+
+    if (error && error.message && error.message.includes('user_id')) {
+      const fallback = await supabase
+        .from('conversations')
+        .insert([{ title: title }])
+        .select()
+        .single();
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) {
       console.error('Supabase create conversation error:', error);
@@ -185,6 +435,37 @@ app.get('/api/conversations/:id/messages', async (req, res) => {
 
     if (!supabase) {
       return res.json({ success: true, messages: [] });
+    }
+
+    const user = await getAuthUser(req);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Please login or create an account to view chat history.',
+        requiresAuth: true
+      });
+    }
+
+    // Verify conversation ownership
+    let { data: conv, error: convErr } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .single();
+
+    if (convErr && convErr.message && convErr.message.includes('user_id')) {
+      const fallback = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('id', id)
+        .single();
+      conv = fallback.data;
+      convErr = fallback.error;
+    }
+
+    if (convErr || !conv) {
+      return res.status(404).json({ success: false, error: 'Conversation not found or access denied.' });
     }
 
     const { data, error } = await supabase
@@ -232,15 +513,35 @@ app.patch('/api/conversations/:id', async (req, res) => {
       });
     }
 
-    const { data, error } = await supabase
+    const user = await getAuthUser(req);
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Unauthorized.', requiresAuth: true });
+    }
+
+    let { data, error } = await supabase
       .from('conversations')
       .update({
         title: cleanTitle,
         updated_at: new Date().toISOString()
       })
       .eq('id', id)
+      .eq('user_id', user.id)
       .select()
       .single();
+
+    if (error && error.message && error.message.includes('user_id')) {
+      const fallback = await supabase
+        .from('conversations')
+        .update({
+          title: cleanTitle,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select()
+        .single();
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) {
       console.error('Supabase rename conversation error:', error);
@@ -274,11 +575,25 @@ app.delete('/api/conversations/:id', async (req, res) => {
       return res.json({ success: true, id: id });
     }
 
+    const user = await getAuthUser(req);
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Unauthorized.', requiresAuth: true });
+    }
+
     // Deleting from conversations will automatically cascade to messages via foreign key ON DELETE CASCADE
-    const { error } = await supabase
+    let { error } = await supabase
       .from('conversations')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error && error.message && error.message.includes('user_id')) {
+      const fallback = await supabase
+        .from('conversations')
+        .delete()
+        .eq('id', id);
+      error = fallback.error;
+    }
 
     if (error) {
       console.error('Supabase delete conversation error:', error);
@@ -316,6 +631,16 @@ app.post('/api/chat', async (req, res) => {
       });
     }
 
+    // Check Authentication
+    const user = await getAuthUser(req);
+    if (!user && supabase) {
+      return res.status(401).json({
+        success: false,
+        error: 'Please login or create an account to start chatting with Nexus AI.',
+        requiresAuth: true
+      });
+    }
+
     const apiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '').trim();
 
     // 2. Check for configured API Key
@@ -331,14 +656,27 @@ app.post('/api/chat', async (req, res) => {
     let generatedTitle = null;
 
     // 3. Database Persistence: Manage conversation row
-    if (supabase) {
+    if (supabase && user) {
       if (!activeConvId) {
         generatedTitle = generateShortTitle(message.trim());
-        const { data: newConv, error: convErr } = await supabase
+        let { data: newConv, error: convErr } = await supabase
           .from('conversations')
-          .insert([{ title: generatedTitle }])
+          .insert([{
+            title: generatedTitle,
+            user_id: user.id
+          }])
           .select()
           .single();
+
+        if (convErr && convErr.message && convErr.message.includes('user_id')) {
+          const fallback = await supabase
+            .from('conversations')
+            .insert([{ title: generatedTitle }])
+            .select()
+            .single();
+          newConv = fallback.data;
+          convErr = fallback.error;
+        }
 
         if (!convErr && newConv) {
           activeConvId = newConv.id;
@@ -539,16 +877,20 @@ Strict formatting rules:
   }
 });
 
-// // Start Server
-// app.listen(PORT, () => {
-//   console.log(`=================================================`);
-//   console.log(`  ✨ Nexus AI Backend Server Running`);
-//   console.log(`  🌐 Local: http://localhost:${PORT}`);
-//   console.log(`  🔑 Gemini Key Configured: ${Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') ? 'YES' : 'NO'}`);
-//   console.log(`  🗄️  Supabase Database: ${Boolean(supabase) ? 'CONNECTED' : 'LOCAL FALLBACK'}`);
-//   console.log(`=================================================`);
-// });
+// Start Server locally if not running within a serverless container (e.g. Vercel)
+if (process.env.VERCEL !== '1' && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  app.listen(PORT, () => {
+    console.log(`=================================================`);
+    console.log(`  ✨ Nexus AI Backend Server Running`);
+    console.log(`  🌐 Local: http://localhost:${PORT}`);
+    console.log(`  🔑 Gemini Key Configured: ${Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') ? 'YES' : 'NO'}`);
+    console.log(`  🗄️  Supabase Database: ${Boolean(supabase) ? 'CONNECTED' : 'LOCAL FALLBACK'}`);
+    console.log(`=================================================`);
+  });
+}
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
+
 export default app;

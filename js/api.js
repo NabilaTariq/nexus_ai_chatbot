@@ -1,12 +1,18 @@
-/**
- * API Service for Nexus AI
- * Communicates with backend endpoints for AI generation and Supabase persistent conversations
- */
-
 // Detect backend base URL (handles file://, live-server port 5500/5173, or direct http://localhost:3000)
 const API_BASE = (typeof window !== 'undefined' && window.location.protocol.startsWith('http') && (window.location.port === '3000' || !window.location.port))
   ? ''
   : 'http://localhost:3000';
+
+function getAuthHeaders() {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  const token = localStorage.getItem('nexus_auth_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
 
 export const API = {
   /**
@@ -24,11 +30,88 @@ export const API = {
   },
 
   /**
+   * --------------------------------------------------------------------------
+   * AUTHENTICATION API
+   * --------------------------------------------------------------------------
+   */
+
+  /**
+   * Sign In with Email & Password
+   */
+  async login(email, password) {
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      return await response.json();
+    } catch (err) {
+      console.error('API login error:', err);
+      return { success: false, error: 'Unable to connect to authentication server.' };
+    }
+  },
+
+  /**
+   * Sign Up with Email, Password & Full Name
+   */
+  async signup(email, password, fullName) {
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, fullName })
+      });
+      return await response.json();
+    } catch (err) {
+      console.error('API signup error:', err);
+      return { success: false, error: 'Unable to connect to authentication server.' };
+    }
+  },
+
+  /**
+   * Sign Out
+   */
+  async logout() {
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/logout`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      return await response.json();
+    } catch (err) {
+      return { success: true };
+    }
+  },
+
+  /**
+   * Get Current User Profile from token
+   */
+  async getMe() {
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/me`, {
+        headers: getAuthHeaders()
+      });
+      return await response.json();
+    } catch (err) {
+      return { success: false, authenticated: false };
+    }
+  },
+
+  /**
+   * --------------------------------------------------------------------------
+   * CONVERSATIONS API (PERSISTENT & USER-SCOPED)
+   * --------------------------------------------------------------------------
+   */
+
+  /**
    * Fetch all saved conversations from backend / Supabase
    */
   async getConversations() {
     try {
-      const response = await fetch(`${API_BASE}/api/conversations`);
+      const response = await fetch(`${API_BASE}/api/conversations`, {
+        headers: getAuthHeaders()
+      });
       const data = await response.json();
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Failed to fetch conversations');
@@ -47,7 +130,7 @@ export const API = {
     try {
       const response = await fetch(`${API_BASE}/api/conversations`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ title })
       });
       const data = await response.json();
@@ -66,7 +149,9 @@ export const API = {
    */
   async getConversationMessages(conversationId) {
     try {
-      const response = await fetch(`${API_BASE}/api/conversations/${encodeURIComponent(conversationId)}/messages`);
+      const response = await fetch(`${API_BASE}/api/conversations/${encodeURIComponent(conversationId)}/messages`, {
+        headers: getAuthHeaders()
+      });
       const data = await response.json();
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Failed to fetch messages');
@@ -85,7 +170,7 @@ export const API = {
     try {
       const response = await fetch(`${API_BASE}/api/conversations/${encodeURIComponent(conversationId)}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ title: newTitle })
       });
       const data = await response.json();
@@ -105,7 +190,8 @@ export const API = {
   async deleteConversation(conversationId) {
     try {
       const response = await fetch(`${API_BASE}/api/conversations/${encodeURIComponent(conversationId)}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
@@ -129,9 +215,7 @@ export const API = {
     try {
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           message: message,
           conversationId: conversationId,
@@ -146,7 +230,8 @@ export const API = {
         return {
           success: false,
           error: data.error || `Server responded with status ${response.status}`,
-          errorType: data.errorType || 'API_ERROR'
+          errorType: data.requiresAuth ? 'AUTH_REQUIRED' : (data.errorType || 'API_ERROR'),
+          requiresAuth: Boolean(data.requiresAuth)
         };
       }
 

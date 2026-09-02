@@ -7,6 +7,7 @@ import { PROMPT_CARDS } from './data.js';
 import { renderMarkdown } from './markdown.js';
 import { UI } from './ui.js';
 import { API } from './api.js';
+import { Auth } from './auth.js';
 
 export const ChatEngine = {
   activeChatId: null,
@@ -17,10 +18,15 @@ export const ChatEngine = {
   activeDropdownId: null,
 
   async init() {
+    window.NexusChatEngine = this;
     this.renderPromptCards();
     this.bindEvents();
     this.initDropdownHandler();
-    await this.refreshConversations();
+    if (Auth.isAuthenticated()) {
+      await this.refreshConversations();
+    } else {
+      this.renderSidebarHistory();
+    }
     this.checkStatus();
   },
 
@@ -58,7 +64,9 @@ export const ChatEngine = {
     grid.querySelectorAll('.prompt-card').forEach(card => {
       card.addEventListener('click', () => {
         const prompt = decodeURIComponent(card.dataset.prompt);
-        this.sendMessage(prompt);
+        Auth.requireAuth(() => {
+          this.sendMessage(prompt);
+        });
       });
     });
   },
@@ -266,7 +274,11 @@ export const ChatEngine = {
     }
   },
 
-  startNewChat() {
+  startNewChat(force = false) {
+    if (!force && !Auth.requireAuth(() => this.startNewChat(true))) {
+      return;
+    }
+
     this.activeChatId = null;
     this.activeMessages = [];
     const messageList = document.getElementById('messageList');
@@ -283,6 +295,10 @@ export const ChatEngine = {
   },
 
   async loadChat(chatId) {
+    if (!Auth.requireAuth(() => this.loadChat(chatId))) {
+      return;
+    }
+
     const conv = this.conversations.find(c => c.id === chatId);
     if (!conv) return;
 
@@ -326,6 +342,11 @@ export const ChatEngine = {
     // 1. Prevent empty submissions
     if (!text && !this.attachedFile) {
       UI.showToast('Please type a message before sending');
+      return;
+    }
+
+    // Require authentication before dispatching prompt
+    if (!Auth.requireAuth(() => this.sendMessage(text))) {
       return;
     }
 
@@ -405,9 +426,13 @@ export const ChatEngine = {
         if (chatTitle) chatTitle.textContent = apiResult.title;
       }
     } else {
-      // Display user-friendly error card
-      this.appendErrorMessage(apiResult.error, apiResult.errorType);
-      UI.showToast('Failed to get response from AI', '⚠️');
+      if (apiResult.requiresAuth) {
+        Auth.requireAuth(() => this.sendMessage(fullUserText));
+      } else {
+        // Display user-friendly error card
+        this.appendErrorMessage(apiResult.error, apiResult.errorType);
+        UI.showToast('Failed to get response from AI', '⚠️');
+      }
     }
 
     this.isGenerating = false;

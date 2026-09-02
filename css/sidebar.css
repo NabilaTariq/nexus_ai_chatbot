@@ -397,3 +397,21 @@
 .footer-btn svg {
   color: var(--text-gold);
 }
+
+.btn-sidebar-logout {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  transition: all var(--transition-fast);
+  background: transparent;
+}
+
+.btn-sidebar-logout:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
