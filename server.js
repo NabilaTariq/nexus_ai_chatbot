@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 
+
+
 // Load environment variables from .env
 dotenv.config();
 
@@ -13,6 +15,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+app.use(express.static(__dirname));
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -542,6 +547,6 @@ Strict formatting rules:
 //   console.log(`=================================================`);
 // });
 app.get("/", (req, res) => {
-  res.send("Nexus AI Chatbot is running 🚀");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 export default app;
