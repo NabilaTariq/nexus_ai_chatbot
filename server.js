@@ -101,6 +101,8 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     apiKeyConfigured: hasGeminiKey,
     supabaseConfigured: Boolean(supabase),
+    supabaseUrl: process.env.SUPABASE_URL || null,
+    supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
     model: process.env.GEMINI_MODEL || 'gemini-3.5-flash'
   });
 });

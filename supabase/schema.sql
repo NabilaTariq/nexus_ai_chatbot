@@ -61,3 +61,21 @@ CREATE POLICY "Allow users access to messages in their conversations"
         AND (conversations.user_id = auth.uid() OR auth.uid() IS NULL)
     )
   );
+
+-- 7. Enable Supabase Realtime Replication (Instant live updates on DELETE/UPDATE/INSERT)
+DO $$
+BEGIN
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE conversations;
+  EXCEPTION
+    WHEN duplicate_object THEN NULL;
+    WHEN others THEN NULL;
+  END;
+
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+  EXCEPTION
+    WHEN duplicate_object THEN NULL;
+    WHEN others THEN NULL;
+  END;
+END $$;
