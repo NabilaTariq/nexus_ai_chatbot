@@ -27,9 +27,9 @@ app.use(express.static(__dirname));
  */
 const supabaseUrl = (process.env.SUPABASE_URL || '').trim();
 const supabaseKey = (
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 
-  process.env.SUPABASE_ANON_KEY || 
-  process.env.SUPABASE_KEY || 
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_KEY ||
   ''
 ).trim();
 
@@ -50,15 +50,15 @@ if (supabaseUrl && supabaseKey && !supabaseUrl.includes('your-project-id') && su
  */
 function generateShortTitle(message) {
   if (!message) return 'New Conversation';
-  
+
   // Clean up punctuation and excess spaces
   let cleaned = message.replace(/[^\w\s-]/g, '').trim();
   const words = cleaned.split(/\s+/).filter(Boolean);
-  
+
   if (words.length <= 5) {
     return words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
   }
-  
+
   return words.slice(0, 5).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '...';
 }
 
@@ -354,7 +354,7 @@ app.post('/api/chat', async (req, res) => {
 
     // 4. Format and sanitize conversation history for multi-turn Gemini chat
     let contents = [];
-    
+
     // If Supabase is connected and we have a conversationId, query DB history for source-of-truth context
     let contextMessages = history;
     if (supabase && activeConvId) {
@@ -532,12 +532,16 @@ Strict formatting rules:
   }
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`=================================================`);
-  console.log(`  ✨ Nexus AI Backend Server Running`);
-  console.log(`  🌐 Local: http://localhost:${PORT}`);
-  console.log(`  🔑 Gemini Key Configured: ${Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') ? 'YES' : 'NO'}`);
-  console.log(`  🗄️  Supabase Database: ${Boolean(supabase) ? 'CONNECTED' : 'LOCAL FALLBACK'}`);
-  console.log(`=================================================`);
+// // Start Server
+// app.listen(PORT, () => {
+//   console.log(`=================================================`);
+//   console.log(`  ✨ Nexus AI Backend Server Running`);
+//   console.log(`  🌐 Local: http://localhost:${PORT}`);
+//   console.log(`  🔑 Gemini Key Configured: ${Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') ? 'YES' : 'NO'}`);
+//   console.log(`  🗄️  Supabase Database: ${Boolean(supabase) ? 'CONNECTED' : 'LOCAL FALLBACK'}`);
+//   console.log(`=================================================`);
+// });
+app.get("/", (req, res) => {
+  res.send("Nexus AI Chatbot is running 🚀");
 });
+export default app;
