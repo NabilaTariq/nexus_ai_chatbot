@@ -17,7 +17,8 @@ export const ChatEngine = {
   activeMessages: [], // Messages for current active conversation: [{ id, role, content, created_at }]
   activeDropdownId: null,
   _syncInterval: null,
-  _supabaseRealtimeClient: null,
+  _isSyncing: false,
+  _lastSyncTime: 0,
 
   async init() {
     window.NexusChatEngine = this;
@@ -40,86 +41,38 @@ export const ChatEngine = {
     }
     if (health.supabaseConfigured) {
       console.log('🗄️ Connected to Supabase PostgreSQL Database.');
-      if (health.supabaseUrl && health.supabaseAnonKey) {
-        this.initSupabaseRealtime(health.supabaseUrl, health.supabaseAnonKey);
-      }
     } else {
       console.log('ℹ️ Operating with in-memory / local storage mode.');
     }
   },
 
   /**
-   * Connect to Supabase Realtime WebSocket for instant live deletion and updates
-   */
-  async initSupabaseRealtime(supabaseUrl, supabaseAnonKey) {
-    if (!supabaseUrl || !supabaseAnonKey || this._supabaseRealtimeClient) return;
-
-    try {
-      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-      this._supabaseRealtimeClient = createClient(supabaseUrl, supabaseAnonKey);
-
-      this._supabaseRealtimeClient
-        .channel('nexus-live-sync')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, (payload) => {
-          console.log('⚡ Supabase Realtime event on conversations:', payload.eventType);
-          if (payload.eventType === 'DELETE') {
-            const deletedId = payload.old?.id;
-            if (deletedId) {
-              this.conversations = this.conversations.filter(c => c.id !== deletedId);
-              this.renderSidebarHistory();
-
-              if (this.activeChatId === deletedId) {
-                this.startNewChat(true);
-                UI.showToast('Active conversation was deleted in Supabase', '🗑️');
-              }
-            } else {
-              this.refreshConversations(true);
-            }
-          } else {
-            this.refreshConversations(true);
-          }
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
-          if (payload.eventType === 'DELETE' && this.activeChatId) {
-            if (!payload.old?.conversation_id || payload.old.conversation_id === this.activeChatId) {
-              this.loadChat(this.activeChatId);
-            }
-          }
-        })
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            console.log('⚡ Supabase Realtime WebSocket connected for live deletion & sync.');
-          }
-        });
-    } catch (e) {
-      console.warn('Supabase Realtime WebSocket unavailable; using heartbeat sync:', e);
-    }
-  },
-
-  /**
-   * Start window focus & heartbeat background synchronization
+   * Lightweight, debounced background sync on tab focus and periodic heartbeat
    */
   startRealtimeSync() {
-    // 1. Auto-sync on window focus & tab visibility change
-    window.addEventListener('focus', () => {
-      if (Auth.isAuthenticated()) {
+    const triggerDebouncedSync = () => {
+      const now = Date.now();
+      if (now - this._lastSyncTime < 2000) return; // Debounce 2s
+      if (Auth.isAuthenticated() && !this.isGenerating && !this._isSyncing) {
         this.refreshConversations(true);
       }
-    });
+    };
 
+    // Auto-sync when user switches back to the tab
+    window.addEventListener('focus', triggerDebouncedSync);
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && Auth.isAuthenticated()) {
-        this.refreshConversations(true);
+      if (document.visibilityState === 'visible') {
+        triggerDebouncedSync();
       }
     });
 
-    // 2. Periodic background sync every 6 seconds
+    // Periodic heartbeat sync every 8 seconds
     if (this._syncInterval) clearInterval(this._syncInterval);
     this._syncInterval = setInterval(() => {
-      if (Auth.isAuthenticated() && !this.isGenerating && document.visibilityState === 'visible') {
+      if (Auth.isAuthenticated() && !this.isGenerating && !this._isSyncing && document.visibilityState === 'visible') {
         this.refreshConversations(true);
       }
-    }, 6000);
+    }, 8000);
   },
 
   renderPromptCards() {
@@ -158,40 +111,49 @@ export const ChatEngine = {
       return;
     }
 
-    const res = await API.getConversations();
-    if (res.success && Array.isArray(res.conversations)) {
-      const newConversations = res.conversations;
-      const previousIds = new Set(this.conversations.map(c => c.id));
-      const currentIds = new Set(newConversations.map(c => c.id));
+    if (this._isSyncing) return;
+    this._isSyncing = true;
+    this._lastSyncTime = Date.now();
 
-      const hasDeletions = this.conversations.some(c => !currentIds.has(c.id));
-      const hasAdditions = newConversations.some(c => !previousIds.has(c.id));
-      const hasUpdates = this.conversations.length !== newConversations.length ||
-        this.conversations.some((c, i) => newConversations[i] && (c.title !== newConversations[i].title || c.updated_at !== newConversations[i].updated_at));
+    try {
+      const res = await API.getConversations();
+      if (res.success && Array.isArray(res.conversations)) {
+        const newConversations = res.conversations;
+        const currentIds = new Set(newConversations.map(c => c.id));
+        const previousIds = new Set(this.conversations.map(c => c.id));
 
-      this.conversations = newConversations;
+        const hasDeletions = this.conversations.some(c => !currentIds.has(c.id));
+        const hasAdditions = newConversations.some(c => !previousIds.has(c.id));
+        const hasLengthChange = this.conversations.length !== newConversations.length;
 
-      // If active conversation was deleted in Supabase
-      if (this.activeChatId && !currentIds.has(this.activeChatId)) {
-        console.warn(`Conversation ${this.activeChatId} was deleted in Supabase. Resetting view.`);
-        this.activeChatId = null;
-        this.activeMessages = [];
-        const messageList = document.getElementById('messageList');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const chatTitle = document.getElementById('navbarChatTitle');
+        this.conversations = newConversations;
 
-        if (messageList) messageList.innerHTML = '';
-        if (welcomeScreen) welcomeScreen.classList.remove('hidden');
-        if (chatTitle) chatTitle.textContent = 'Nexus 4.0 Pro';
+        // If the active conversation was deleted in Supabase
+        if (this.activeChatId && !currentIds.has(this.activeChatId)) {
+          console.log(`Active conversation ${this.activeChatId} was deleted in Supabase.`);
+          this.activeChatId = null;
+          this.activeMessages = [];
+          const messageList = document.getElementById('messageList');
+          const welcomeScreen = document.getElementById('welcomeScreen');
+          const chatTitle = document.getElementById('navbarChatTitle');
 
-        this.renderSidebarHistory();
-        UI.showToast('Active conversation was deleted in Supabase', '🗑️');
-        return;
+          if (messageList) messageList.innerHTML = '';
+          if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+          if (chatTitle) chatTitle.textContent = 'Nexus 4.0 Pro';
+
+          this.renderSidebarHistory();
+          UI.showToast('Active conversation was deleted in database', '🗑️');
+          return;
+        }
+
+        if (hasDeletions || hasAdditions || hasLengthChange || !isBackgroundSync) {
+          this.renderSidebarHistory();
+        }
       }
-
-      if (hasDeletions || hasAdditions || hasUpdates || !isBackgroundSync) {
-        this.renderSidebarHistory();
-      }
+    } catch (e) {
+      console.warn('Sync error:', e);
+    } finally {
+      this._isSyncing = false;
     }
   },
 
