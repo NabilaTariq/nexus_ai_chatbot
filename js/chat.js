@@ -412,7 +412,10 @@ export const ChatEngine = {
   },
 
   async sendMessage(userInputText = null) {
-    if (this.isGenerating) return;
+    if (this.isGenerating) {
+      console.warn('sendMessage blocked: generation already in progress');
+      return;
+    }
 
     const textarea = document.getElementById('composerTextarea');
     const text = (userInputText !== null ? userInputText : (textarea ? textarea.value : '')).trim();
@@ -423,10 +426,16 @@ export const ChatEngine = {
       return;
     }
 
-    // Require authentication before dispatching prompt
-    if (!Auth.requireAuth(() => this.sendMessage(text))) {
+    // Require authentication before proceeding
+    if (!Auth.isAuthenticated()) {
+      Auth.requireAuth(() => this.sendMessage(text));
       return;
     }
+
+    // Lock immediately
+    this.isGenerating = true;
+    this.setSendButtonLoading(true);
+    if (textarea) textarea.disabled = true;
 
     // Reset textarea input
     if (textarea) {
@@ -439,82 +448,84 @@ export const ChatEngine = {
     const welcomeScreen = document.getElementById('welcomeScreen');
     if (welcomeScreen) welcomeScreen.classList.add('hidden');
 
-    // 2. Prepare and render user message
     const fullUserText = this.attachedFile ? `📎 [${this.attachedFile.name}]\n${text}` : text;
     this.appendUserMessage(fullUserText);
     this.clearAttachment();
     UI.scrollToBottom(true, true);
 
-    // Prepare prior context
-    const priorContext = this.activeMessages.map(m => ({
-      role: m.role,
-      content: m.content || ''
-    }));
-
-    // Optimistically add user message to active memory
-    const tempUserObj = {
-      id: `temp-${Date.now()}`,
-      role: 'user',
-      content: fullUserText,
-      created_at: new Date().toISOString()
-    };
-    this.activeMessages.push(tempUserObj);
-
-    // Set UI to loading state
-    this.isGenerating = true;
-    this.setSendButtonLoading(true);
-
-    // Show animated typing indicator
     const typingRow = this.showTypingIndicator();
     UI.scrollToBottom(true, true);
 
-    // 3. Dispatch message to backend API (saves to Supabase & queries Gemini)
-    const apiResult = await API.sendChatMessage(
-      fullUserText,
-      this.activeChatId,
-      priorContext
-    );
+    try {
+      // Prepare prior context
+      const priorContext = this.activeMessages.map(m => ({
+        role: m.role,
+        content: m.content || ''
+      }));
 
-    // Remove typing indicator
-    if (typingRow) typingRow.remove();
-
-    if (apiResult.success) {
-      // Update activeChatId if newly created
-      if (apiResult.conversationId) {
-        this.activeChatId = apiResult.conversationId;
-      }
-
-      // Stream real AI response with typewriter animation
-      await this.streamAssistantResponse(apiResult.text);
-
-      // Add assistant message to active memory
-      this.activeMessages.push({
-        id: `msg-${Date.now()}`,
-        role: 'assistant',
-        content: apiResult.text,
+      // Optimistically add user message to active memory
+      const tempUserObj = {
+        id: `temp-${Date.now()}`,
+        role: 'user',
+        content: fullUserText,
         created_at: new Date().toISOString()
-      });
+      };
+      this.activeMessages.push(tempUserObj);
 
-      // Update or refresh conversations in sidebar
-      await this.refreshConversations();
+      // Dispatch message to backend API (saves to Supabase & queries Gemini)
+      const apiResult = await API.sendChatMessage(
+        fullUserText,
+        this.activeChatId,
+        priorContext
+      );
 
-      // If a title was auto-generated, update header
-      if (apiResult.title) {
-        const chatTitle = document.getElementById('navbarChatTitle');
-        if (chatTitle) chatTitle.textContent = apiResult.title;
-      }
-    } else {
-      if (apiResult.requiresAuth) {
-        Auth.requireAuth(() => this.sendMessage(fullUserText));
+      // Remove typing indicator
+      if (typingRow) typingRow.remove();
+
+      if (apiResult.success) {
+        if (apiResult.conversationId) {
+          this.activeChatId = apiResult.conversationId;
+        }
+
+        // Stream AI response with typewriter animation
+        await this.streamAssistantResponse(apiResult.text);
+
+        // Add assistant message to active memory
+        this.activeMessages.push({
+          id: `msg-${Date.now()}`,
+          role: 'assistant',
+          content: apiResult.text,
+          created_at: new Date().toISOString()
+        });
+
+        // Refresh conversations in sidebar
+        await this.refreshConversations();
+
+        // If title was auto-generated, update header
+        if (apiResult.title) {
+          const chatTitle = document.getElementById('navbarChatTitle');
+          if (chatTitle) chatTitle.textContent = apiResult.title;
+        }
       } else {
-        // Display user-friendly error card
-        this.appendErrorMessage(apiResult.error, apiResult.errorType);
-        UI.showToast('Failed to get response from AI', '⚠️');
+        if (apiResult.requiresAuth) {
+          Auth.openAuthModal('Please login or create an account to start chatting with Nexus AI.');
+        } else {
+          this.appendErrorMessage(apiResult.error, apiResult.errorType);
+          UI.showToast('Failed to get response from AI', '⚠️');
+        }
+      }
+    } catch (err) {
+      console.error('Error during message sending/streaming:', err);
+      if (typingRow) typingRow.remove();
+      this.appendErrorMessage('An unexpected error occurred while processing your message. Please try again.');
+    } finally {
+      this.isGenerating = false;
+      this.setSendButtonLoading(false);
+      if (textarea) {
+        textarea.disabled = false;
+        textarea.focus();
       }
     }
-
-    this.isGenerating = false;
-    this.setSendButtonLoading(false);
   },
 
   appendUserMessage(text, animate = true) {
@@ -878,6 +889,8 @@ export const ChatEngine = {
       textarea.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
+          if (e.repeat) return;
+          if (this.isGenerating) return;
           this.sendMessage();
         }
       });
@@ -887,6 +900,7 @@ export const ChatEngine = {
     if (btnSend) {
       btnSend.addEventListener('click', (e) => {
         e.preventDefault();
+        if (this.isGenerating) return;
         this.sendMessage();
       });
     }

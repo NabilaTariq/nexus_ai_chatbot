@@ -64,15 +64,12 @@ export const Auth = {
 
   /**
    * Require authentication wrapper.
-   * If authenticated -> runs action.
-   * If guest -> stores action and prompts Login / Signup modal.
-   * @param {Function} actionCallback The callback to execute when authenticated
+   * If authenticated -> returns true.
+   * If guest -> stores action, prompts Login/Signup modal, and returns false.
+   * @param {Function} actionCallback The callback to execute when later authenticated
    */
   requireAuth(actionCallback = null) {
     if (this.isAuthenticated()) {
-      if (typeof actionCallback === 'function') {
-        actionCallback();
-      }
       return true;
     }
 

@@ -614,6 +614,9 @@ app.delete('/api/conversations/:id', async (req, res) => {
   }
 });
 
+// Server-side Idempotency & Rate Lock Cache (prevents duplicate submissions)
+const activeChatLocks = new Map();
+
 /**
  * --------------------------------------------------------------------------
  * CHAT COMPLETION & PERSISTENCE ENDPOINT
@@ -642,6 +645,21 @@ app.post('/api/chat', async (req, res) => {
         requiresAuth: true
       });
     }
+
+    // Deduplication check to prevent duplicate inserts and runaway calls
+    const lockKey = `${user ? user.id : 'guest'}_${(conversationId || 'new')}_${message.trim()}`;
+    if (activeChatLocks.has(lockKey)) {
+      const lockTime = activeChatLocks.get(lockKey);
+      if (Date.now() - lockTime < 3000) {
+        console.warn(`[Deduplication] Blocked duplicate chat submission for key: ${lockKey}`);
+        return res.status(429).json({
+          success: false,
+          error: 'A request is already being processed. Please wait.'
+        });
+      }
+    }
+    activeChatLocks.set(lockKey, Date.now());
+    setTimeout(() => activeChatLocks.delete(lockKey), 6000);
 
     const apiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '').trim();
 
