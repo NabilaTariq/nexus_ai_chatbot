@@ -16,7 +16,9 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname)));
+app.use("/css", express.static(path.join(__dirname, "css")));
+app.use("/js", express.static(path.join(__dirname, "js")));
 
 const PORT = process.env.PORT || 3000;
 
