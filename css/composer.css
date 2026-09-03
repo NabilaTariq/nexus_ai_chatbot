@@ -1,9 +1,6 @@
 /* ==========================================================================
-   Composer / Message Input Command Center - Nexus AI
-   Brand Palette:
-   - Command Surface: #210b0f (Warm Brown Glass)
-   - Accents & Highlights: #efefef (Light Cream)
-   - Base Canvas: #2e0003 (Primary Dark Burgundy)
+   Composer / Message Input Bar - Midnight Orchid Luxury AI
+   Input Box: Iris Mist (#BAB0C8) Background with Dark Text (#1C1729)
    ========================================================================== */
 
 .composer-section {
@@ -15,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   padding: 0 var(--space-4) var(--space-4);
-  background: linear-gradient(180deg, transparent 0%, rgba(46, 0, 3, 0.85) 30%, var(--bg-primary) 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(49, 42, 68, 0.85) 30%, var(--bg-primary) 100%);
   z-index: 30;
   pointer-events: none;
 }
@@ -33,11 +30,11 @@
   gap: var(--space-2);
   margin-bottom: var(--space-2);
   padding: 6px 14px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--cream-border-medium);
+  background: var(--input-bg);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   width: fit-content;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 14px rgba(14, 10, 22, 0.4);
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -50,35 +47,34 @@
   align-items: center;
   gap: var(--space-2);
   font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  color: var(--input-text);
 }
 
 .attachment-chip svg {
-  color: var(--cream-primary);
+  color: var(--input-text);
 }
 
 .btn-remove-attachment {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  color: var(--cream-muted);
+  color: rgba(28, 23, 41, 0.6);
+  font-weight: 700;
 }
 
 .btn-remove-attachment:hover {
-  background: var(--bg-elevated);
-  color: #f87171;
+  background: rgba(28, 23, 41, 0.15);
+  color: #ef4444;
 }
 
-/* Main Command Dock Card */
+/* Main Composer Card: Iris Mist (#BAB0C8) Background with Dark Text */
 .composer-card {
-  background: rgba(33, 11, 15, 0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--cream-border-medium);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius-xl);
   padding: 14px 18px;
-  box-shadow: var(--shadow-composer), inset 0 1px 1px rgba(239, 239, 239, 0.08);
+  box-shadow: var(--shadow-composer), 0 0 20px rgba(186, 176, 200, 0.2);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -86,11 +82,11 @@
 }
 
 .composer-card:focus-within {
-  border-color: var(--cream-border-highlight);
-  box-shadow: var(--shadow-composer), 0 0 20px rgba(239, 239, 239, 0.1);
+  border-color: #FFFFFF;
+  box-shadow: var(--shadow-composer), 0 0 28px rgba(186, 176, 200, 0.4);
 }
 
-/* Textarea Input */
+/* Textarea Input (Dark text on Iris Mist) */
 .composer-input-row {
   display: flex;
   align-items: flex-start;
@@ -104,25 +100,26 @@
   max-height: 180px;
   resize: none;
   background: transparent;
-  color: var(--text-primary);
+  color: var(--input-text);
   font-size: var(--font-size-base);
+  font-weight: 500;
   line-height: 1.5;
   padding: 3px 0;
   overflow-y: auto;
 }
 
 .composer-textarea::placeholder {
-  color: var(--cream-muted);
-  font-weight: 400;
+  color: var(--input-placeholder);
+  font-weight: 500;
 }
 
-/* Composer Bottom Toolbar (Actions + Send Button) */
+/* Composer Bottom Toolbar */
 .composer-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-top: 10px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(28, 23, 41, 0.12);
 }
 
 .composer-tools-left {
@@ -135,8 +132,8 @@
   padding: 6px 12px;
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
-  font-weight: 500;
-  color: var(--cream-secondary);
+  font-weight: 600;
+  color: var(--input-tool-text);
   border: 1px solid transparent;
   gap: 6px;
   background: transparent;
@@ -144,24 +141,28 @@
 }
 
 .btn-tool:hover {
-  background: var(--bg-hover);
-  color: var(--cream-pure);
-  border-color: var(--cream-border-subtle);
+  background: var(--input-tool-hover);
+  border-color: rgba(28, 23, 41, 0.15);
 }
 
 .btn-tool svg {
-  color: var(--cream-muted);
+  color: var(--input-tool-text);
   transition: color var(--transition-fast);
 }
 
-.btn-tool:hover svg {
-  color: var(--cream-pure);
+.btn-tool.active {
+  background: var(--input-tool-active);
+  border-color: rgba(28, 23, 41, 0.25);
 }
 
-.btn-tool.active {
-  background: rgba(239, 239, 239, 0.12);
-  color: var(--cream-pure);
-  border-color: var(--cream-border-medium);
+.tool-model-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(28, 23, 41, 0.12);
+  color: var(--input-text);
+  border: 1px solid rgba(28, 23, 41, 0.15);
 }
 
 .composer-tools-right {
@@ -172,13 +173,13 @@
 
 .key-hint {
   font-size: 0.7rem;
-  color: var(--cream-muted);
+  color: rgba(28, 23, 41, 0.7);
   display: none;
 }
 
 .key-hint strong {
-  color: var(--cream-secondary);
-  font-weight: 600;
+  color: var(--input-text);
+  font-weight: 700;
 }
 
 @media (min-width: 900px) {
@@ -187,38 +188,38 @@
   }
 }
 
-/* Send Button */
+/* Send Button: Midnight Orchid with Silver Wisteria/White Icon */
 .btn-send {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background: var(--bg-elevated);
-  color: var(--cream-muted);
-  border: 1px solid var(--border-subtle);
+  background: rgba(49, 42, 68, 0.25);
+  color: rgba(49, 42, 68, 0.6);
+  border: 1px solid rgba(49, 42, 68, 0.2);
   transition: all var(--transition-fast);
   flex-shrink: 0;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-send.active {
-  background: var(--gradient-cream-btn);
-  color: var(--brand-brown);
-  border-color: #ffffff;
-  box-shadow: 0 0 18px rgba(239, 239, 239, 0.45);
+  background: var(--gradient-button-send);
+  color: #FFFFFF;
+  border-color: var(--orchid-midnight);
+  box-shadow: 0 4px 16px rgba(49, 42, 68, 0.5), 0 0 16px rgba(49, 42, 68, 0.4);
   cursor: pointer;
   transform: scale(1.02);
 }
 
 .btn-send.active:hover {
-  background: #ffffff;
+  background: #1C1729;
   transform: scale(1.06);
-  box-shadow: 0 0 22px rgba(239, 239, 239, 0.6);
+  box-shadow: 0 6px 20px rgba(49, 42, 68, 0.6), 0 0 22px rgba(215, 197, 214, 0.35);
 }
 
 .btn-send.loading {
-  background: var(--bg-elevated);
-  color: var(--cream-primary);
-  border-color: var(--cream-border-medium);
+  background: var(--orchid-midnight);
+  color: var(--orchid-plum-blossom);
+  border-color: var(--orchid-midnight);
   pointer-events: none;
 }
 
@@ -234,7 +235,7 @@
 /* Footer Disclaimer */
 .composer-disclaimer {
   font-size: 0.72rem;
-  color: var(--cream-dim);
+  color: var(--text-muted);
   text-align: center;
   margin-top: var(--space-2);
   padding: 0 var(--space-2);

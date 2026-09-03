@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Nexus AI — High-caliber conversational intelligence and executive AI platform engineered for precision, reasoning, and workflow synthesis.">
-  <title>Nexus AI — Executive Conversational Intelligence</title>
+  <meta name="description" content="Nexus AI — Your Intelligent AI Companion. Premium conversational intelligence, deep reasoning, and autonomous workflow engine.">
+  <title>Nexus AI — Your Intelligent AI Companion</title>
   
-  <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
+  <!-- Google Fonts: Manrope, Plus Jakarta Sans, Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Modular CSS Stylesheets -->
   <link rel="stylesheet" href="css/variables.css">
@@ -25,7 +25,7 @@
   <!-- Root App Shell -->
   <div class="app-container" id="appContainer">
 
-    <!-- Atmospheric Ambient Background Light -->
+    <!-- Atmospheric Ambient Purple & Orchid Glow Lights -->
     <div class="ambient-glow ambient-glow-1" aria-hidden="true"></div>
     <div class="ambient-glow ambient-glow-2" aria-hidden="true"></div>
     <div class="ambient-glow ambient-glow-3" aria-hidden="true"></div>
@@ -34,13 +34,13 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- ======================================================================
-         LEFT SIDEBAR (Warm Brown Glass Panel)
+         LEFT SIDEBAR (Darker Orchid Gradient Workspace)
          ====================================================================== -->
-    <aside class="sidebar" id="sidebar" aria-label="Chat sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="AI Workspace Sidebar">
       
-      <!-- App Brand Logo / Header -->
+      <!-- Brand Logo / Header -->
       <div class="sidebar-header">
-        <a href="#" class="brand-logo" title="Nexus AI Platform">
+        <a href="#" class="brand-logo" title="Nexus AI Companion">
           <div class="brand-icon-wrapper">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
@@ -48,7 +48,7 @@
           </div>
           <div class="brand-title">
             <span class="brand-name">Nexus AI</span>
-            <span class="brand-tagline">Executive Intelligence</span>
+            <span class="brand-tagline">Orchid Intelligence</span>
           </div>
         </a>
         <button class="sidebar-close-btn" id="btnCloseSidebar" title="Close sidebar" aria-label="Close sidebar">
@@ -61,7 +61,7 @@
 
       <!-- Action: New Chat Button -->
       <div class="sidebar-actions">
-        <button class="btn-new-chat" id="btnNewChat" title="Start a new conversation">
+        <button class="btn-new-chat" id="btnNewChat" title="Start a fresh conversation">
           <div class="btn-left">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -73,12 +73,69 @@
         </button>
       </div>
 
-      <!-- Chat History Stream -->
-      <div class="sidebar-history" id="sidebarHistory" role="region" aria-label="Conversation history">
-        <!-- Rendered dynamically by js/chat.js -->
+      <!-- Search Conversations Input -->
+      <div class="sidebar-search-container">
+        <div class="sidebar-search-box">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="sidebarSearchInput" 
+            class="sidebar-search-input" 
+            placeholder="Search chats..." 
+            aria-label="Search conversation history"
+          >
+          <button class="btn-clear-search hidden" id="btnClearSearch" title="Clear search">✕</button>
+        </div>
       </div>
 
-      <!-- Sidebar Footer (User Profile, Sign In & Settings) -->
+      <!-- AI Tools Section -->
+      <div class="sidebar-tools-section">
+        <div class="section-header-title">AI Workspace Tools</div>
+        <div class="tools-grid-list">
+          <button class="sidebar-tool-btn" data-tool="document" title="Document Analysis">
+            <span class="tool-icon">📄</span>
+            <span class="tool-label">Document Analysis</span>
+          </button>
+          <button class="sidebar-tool-btn" data-tool="research" title="AI Deep Research">
+            <span class="tool-icon">🔬</span>
+            <span class="tool-label">AI Research</span>
+          </button>
+          <button class="sidebar-tool-btn" data-tool="coding" title="Coding Assistant">
+            <span class="tool-icon">💻</span>
+            <span class="tool-label">Coding Assistant</span>
+          </button>
+          <button class="sidebar-tool-btn" id="btnOpenPromptLibrary" title="Prompt Library">
+            <span class="tool-icon">📚</span>
+            <span class="tool-label">Prompt Library</span>
+          </button>
+          <button class="sidebar-tool-btn" data-tool="agents" title="Autonomous Agents">
+            <span class="tool-icon">🤖</span>
+            <span class="tool-label">Custom Agents</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat History Header & Stream -->
+      <div class="sidebar-history-container">
+        <div class="history-stream-header">
+          <span class="section-header-title">Conversations</span>
+          <button class="btn-filter-saved" id="btnToggleFilterSaved" title="Toggle Saved Only">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Saved</span>
+          </button>
+        </div>
+        
+        <div class="sidebar-history" id="sidebarHistory" role="region" aria-label="Conversation history">
+          <!-- Rendered dynamically by js/chat.js -->
+        </div>
+      </div>
+
+      <!-- Sidebar Footer (User Profile & Settings) -->
       <div class="sidebar-footer">
         <div class="user-profile" id="userProfileCard" title="User Profile / Sign In">
           <div class="user-avatar" id="userAvatarInitials">G</div>
@@ -96,12 +153,12 @@
         </div>
 
         <nav class="footer-nav">
-          <button class="footer-btn" id="btnOpenSettings" title="Open Settings">
+          <button class="footer-btn" id="btnOpenSettings" title="Open Settings & Preferences">
             <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
-            <span>Preferences</span>
+            <span>Settings</span>
           </button>
         </nav>
       </div>
@@ -109,7 +166,7 @@
     </aside>
 
     <!-- ======================================================================
-         MAIN CHAT VIEWPORT (Primary Dark Burgundy Background)
+         MAIN CHAT VIEWPORT (Midnight Orchid Canvas)
          ====================================================================== -->
     <main class="main-chat" id="mainChat">
       
@@ -124,17 +181,35 @@
             </svg>
           </button>
 
-          <div class="model-selector" id="modelSelectorBadge" title="Executive Neural Engine">
+          <!-- Model Selector Badge -->
+          <div class="model-selector" id="modelSelectorBadge" title="Click to choose AI Engine">
             <span class="model-dot"></span>
-            <span id="navbarChatTitle">Nexus 4.5 Turbo</span>
+            <span id="navbarChatTitle">Nexus Orchid 4.5</span>
             <span class="model-tier-badge">PRO</span>
             <svg class="icon-sm chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
+
+          <!-- Web Research Mode Pill -->
+          <button class="btn-nav-mode" id="btnToggleWebSearch" title="Toggle Web Research Mode">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span>Web Research</span>
+          </button>
         </div>
 
         <div class="navbar-right">
+          <button class="btn-nav-action" id="btnNavbarPromptLibrary" title="Open Prompt Library">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Library</span>
+          </button>
           <button class="btn-nav-action" id="btnClearChat" title="Clear conversation">
             <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="3 6 5 6 21 6"></polyline>
@@ -142,7 +217,7 @@
             </svg>
             <span>Clear</span>
           </button>
-          <button class="btn-nav-action" id="btnThemeToggle" title="Toggle Aesthetic Mode">
+          <button class="btn-nav-action" id="btnThemeToggle" title="Toggle Theme">
             <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -159,39 +234,28 @@
         </div>
       </header>
 
-      <!-- Scrollable Chat Stream / Welcome Screen Area -->
+      <!-- Scrollable Chat Stream / Homepage Welcome Screen -->
       <div class="chat-scroll-container" id="chatScrollContainer">
         <div class="chat-content-wrapper">
           
-          <!-- Clean Welcome Screen (Empty State) -->
+          <!-- Homepage Before Chat (Luxury Hero & 6 Feature Cards) -->
           <section class="welcome-screen" id="welcomeScreen">
-            <div class="welcome-badge">
-              <span class="pulse-dot"></span>
-              <span>Executive Neural Assistant</span>
-            </div>
-
-            <div class="welcome-crest">
-              <div class="crest-ring crest-ring-outer"></div>
-              <div class="crest-ring crest-ring-inner"></div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-              </svg>
-            </div>
-
-            <h1 class="welcome-title">How can <span class="text-gradient">Nexus AI</span> empower you?</h1>
-            <p class="welcome-subtitle">Experience precision reasoning, high-caliber code generation, and strategic intelligence syntheses.</p>
             
-            <!-- Example Prompt Cards Grid -->
-            <div class="prompt-grid" id="promptGrid">
-              <!-- Rendered dynamically by js/chat.js -->
+            <!-- Hero Title -->
+            <h1 class="welcome-title">Your Intelligent <span class="text-gradient">AI Companion</span></h1>
+            <p class="welcome-subtitle">Calm intelligence engineered for deep reasoning, creative synthesis, and autonomous enterprise workflows.</p>
+            
+            <!-- 6 Feature Cards Grid -->
+            <div class="feature-cards-grid" id="featureCardsGrid">
+              <!-- Rendered dynamically from js/data.js -->
             </div>
 
-            <!-- Quick Capabilities Chips -->
+            <!-- Capabilities & Security Status Badges -->
             <div class="capabilities-bar">
-              <span class="capability-tag">⚡ Fast Inference</span>
-              <span class="capability-tag">🧠 Multi-turn Memory</span>
-              <span class="capability-tag">🛡️ Supabase Encrypted Sync</span>
-              <span class="capability-tag">💻 Code & Math Matrix</span>
+              <span class="capability-tag"><span class="dot"></span> Memory Active</span>
+              <span class="capability-tag"><span class="dot"></span> End-to-End Encryption</span>
+              <span class="capability-tag"><span class="dot"></span> Multi-Engine Matrix</span>
+              <span class="capability-tag"><span class="dot"></span> Real-time Web Context</span>
             </div>
           </section>
 
@@ -207,7 +271,7 @@
       </div>
 
       <!-- ====================================================================
-           BOTTOM MESSAGE COMPOSER (Floating Frosted Command Center)
+           BOTTOM MESSAGE COMPOSER (Iris Mist #BAB0C8 Input Box)
            ==================================================================== -->
       <footer class="composer-section">
         <div class="composer-container">
@@ -223,13 +287,14 @@
             <button class="btn-remove-attachment" id="btnRemoveAttachment" title="Remove attachment">✕</button>
           </div>
 
-          <!-- Composer Card -->
+          <!-- Composer Card in Iris Mist (#BAB0C8) with Dark Text -->
           <div class="composer-card">
+            
             <div class="composer-input-row">
               <textarea 
                 id="composerTextarea" 
                 class="composer-textarea" 
-                placeholder="Ask anything, formulate complex questions, or paste code..." 
+                placeholder="Ask anything, analyze documents, write code, or formulate ideas..." 
                 rows="1"
                 aria-label="Message prompt input"
               ></textarea>
@@ -237,7 +302,8 @@
 
             <div class="composer-toolbar">
               <div class="composer-tools-left">
-                <input type="file" id="fileInput" class="hidden-file-input" accept=".txt,.pdf,.png,.jpg,.jpeg,.py,.js,.json,.csv">
+                <input type="file" id="fileInput" class="hidden-file-input" accept=".txt,.pdf,.png,.jpg,.jpeg,.py,.js,.json,.csv,.md">
+                
                 <button class="btn-tool" id="btnAttach" title="Attach file or media" type="button">
                   <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
@@ -245,7 +311,7 @@
                   <span>Attach</span>
                 </button>
 
-                <button class="btn-tool" id="btnVoiceMock" title="Voice input mode" type="button">
+                <button class="btn-tool" id="btnVoiceMock" title="Voice conversation" type="button">
                   <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
                     <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -253,6 +319,10 @@
                     <line x1="8" y1="23" x2="16" y2="23"></line>
                   </svg>
                   <span>Voice</span>
+                </button>
+
+                <button class="btn-tool" id="btnComposerModel" title="Select Model" type="button">
+                  <span class="tool-model-pill">⚡ Orchid 4.5</span>
                 </button>
               </div>
 
@@ -266,11 +336,12 @@
                 </button>
               </div>
             </div>
+
           </div>
 
           <!-- Bottom Disclaimer -->
           <div class="composer-disclaimer">
-            Nexus AI delivers high-performance synthetic intelligence. Verify critical domain data independently.
+            Nexus AI delivers synthetic reasoning outputs. Verify domain-critical facts independently.
           </div>
 
         </div>
@@ -279,7 +350,34 @@
     </main>
 
     <!-- ======================================================================
-         SETTINGS MODAL DIALOG
+         PROMPT LIBRARY MODAL
+         ====================================================================== -->
+    <div class="modal-backdrop" id="promptLibraryModal" role="dialog" aria-modal="true" aria-labelledby="promptLibTitle">
+      <div class="modal-dialog prompt-lib-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="promptLibTitle">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Orchid Prompt Library</span>
+          </div>
+          <button class="btn-close-modal" id="btnClosePromptLibrary" aria-label="Close prompt library">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="prompt-lib-intro">
+            Select a curated prompt framework to seed your session with production-ready execution.
+          </div>
+          <div class="prompt-lib-categories" id="promptLibCategories">
+            <!-- Rendered dynamically by js/app.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SETTINGS & PREFERENCES MODAL
          ====================================================================== -->
     <div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-dialog">
@@ -289,7 +387,7 @@
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
-            <span>Settings & Preferences</span>
+            <span>Workspace Preferences</span>
           </div>
           <button class="btn-close-modal" id="btnCloseSettings" aria-label="Close settings">✕</button>
         </div>
@@ -298,30 +396,30 @@
           
           <!-- Appearance -->
           <div class="settings-section">
-            <div class="settings-group-title">Appearance</div>
+            <div class="settings-group-title">Aesthetic Environment</div>
             <div class="settings-row">
               <div class="settings-info">
-                <span class="settings-label">Interface Theme</span>
-                <span class="settings-desc">Executive Burgundy Dark or Warm Cream Elegance</span>
+                <span class="settings-label">Interface Mode</span>
+                <span class="settings-desc">Midnight Orchid (Dark) or Wisteria Mist (Light)</span>
               </div>
               <div class="theme-toggle-group">
-                <button class="theme-opt-btn active" data-theme="dark">Burgundy Dark</button>
-                <button class="theme-opt-btn" data-theme="light">Cream Light</button>
+                <button class="theme-opt-btn active" data-theme="dark">Midnight Orchid</button>
+                <button class="theme-opt-btn" data-theme="light">Wisteria Light</button>
               </div>
             </div>
           </div>
 
           <!-- Model & Generation -->
           <div class="settings-section">
-            <div class="settings-group-title">Model Configuration</div>
+            <div class="settings-group-title">AI Engine Matrix</div>
             <div class="settings-row">
               <div class="settings-info">
-                <span class="settings-label">Active Engine</span>
-                <span class="settings-desc">Primary intelligence foundation</span>
+                <span class="settings-label">Default Reasoning Engine</span>
+                <span class="settings-desc">Primary neural backend for conversations</span>
               </div>
               <select class="settings-select" id="settingsModelSelect">
-                <option value="nexus-4">Nexus 4.5 Turbo (High Caliber)</option>
-                <option value="nexus-fast">Nexus Flash (Low Latency)</option>
+                <option value="nexus-orchid">Nexus Orchid 4.5 (Balanced Pro)</option>
+                <option value="nexus-fast">Nexus Flash (Ultra Low Latency)</option>
                 <option value="nexus-reason">Nexus Deep Reasoning Matrix</option>
               </select>
             </div>
@@ -373,7 +471,7 @@
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
               </svg>
             </div>
-            <span>Nexus AI Platform</span>
+            <span>Nexus AI Intelligence</span>
           </div>
           <button class="btn-close-modal" id="btnCloseAuthModal" aria-label="Close authentication modal">✕</button>
         </div>
@@ -385,7 +483,7 @@
             <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
-            <span id="authModalNotice">Please login or create an account to start chatting with Nexus AI.</span>
+            <span id="authModalNotice">Please sign in or create an account to save your AI threads.</span>
           </div>
 
           <!-- Auth Tab Switcher: Sign In / Create Account -->
@@ -412,7 +510,7 @@
                   type="text" 
                   id="authFullName" 
                   class="auth-form-input" 
-                  placeholder="e.g. John Doe" 
+                  placeholder="e.g. Elena Rostova" 
                   autocomplete="name"
                 >
               </div>

@@ -3,7 +3,7 @@
  * Palette: Navy (#1F2A44), Warm Beige (#E8DCC8), Soft Gold (#C6A75E)
  */
 
-import { PROMPT_CARDS } from './data.js';
+import { FEATURE_CARDS, PROMPT_LIBRARY } from './data.js';
 import { renderMarkdown } from './markdown.js';
 import { UI } from './ui.js';
 import { API } from './api.js';
@@ -16,6 +16,10 @@ export const ChatEngine = {
   conversations: [], // Flat list of conversation objects: [{ id, title, created_at, updated_at }]
   activeMessages: [], // Messages for current active conversation: [{ id, role, content, created_at }]
   activeDropdownId: null,
+  searchQuery: '',
+  filterSavedOnly: false,
+  isWebSearchActive: false,
+  selectedModel: 'nexus-orchid',
   _syncInterval: null,
   _isSyncing: false,
   _lastSyncTime: 0,
@@ -76,25 +80,26 @@ export const ChatEngine = {
   },
 
   renderPromptCards() {
-    const grid = document.getElementById('promptGrid');
+    const grid = document.getElementById('featureCardsGrid') || document.getElementById('promptGrid');
     if (!grid) return;
 
-    grid.innerHTML = PROMPT_CARDS.map(card => `
-      <div class="prompt-card" data-prompt="${encodeURIComponent(card.prompt)}">
-        <div class="prompt-card-header">
-          <div class="prompt-icon">${card.icon}</div>
-          <svg class="icon-sm prompt-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
+    grid.innerHTML = FEATURE_CARDS.map(card => `
+      <div class="feature-card" data-prompt="${encodeURIComponent(card.prompt)}">
+        <div class="feature-card-header">
+          <div class="feature-card-icon">${card.icon}</div>
+          <span class="feature-badge-pill">${card.badge}</span>
         </div>
-        <div>
-          <div class="prompt-card-text">${card.title}</div>
-          <div class="prompt-card-desc">${card.desc}</div>
+        <div class="feature-card-body">
+          <div class="feature-card-title">
+            <span>${card.title}</span>
+            <span class="feature-card-arrow">→</span>
+          </div>
+          <div class="feature-card-desc">${card.desc}</div>
         </div>
       </div>
     `).join('');
 
-    grid.querySelectorAll('.prompt-card').forEach(card => {
+    grid.querySelectorAll('.feature-card').forEach(card => {
       card.addEventListener('click', () => {
         const prompt = decodeURIComponent(card.dataset.prompt);
         Auth.requireAuth(() => {
@@ -194,19 +199,28 @@ export const ChatEngine = {
     const historyContainer = document.getElementById('sidebarHistory');
     if (!historyContainer) return;
 
-    if (!this.conversations || this.conversations.length === 0) {
+    let filtered = this.conversations || [];
+    if (this.searchQuery) {
+      const q = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(c => (c.title || '').toLowerCase().includes(q));
+    }
+    if (this.filterSavedOnly) {
+      filtered = filtered.filter(c => c.saved || c.is_saved || c.pinned);
+    }
+
+    if (!filtered || filtered.length === 0) {
       historyContainer.innerHTML = `
         <div class="sidebar-empty-state">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
-          <span>No conversations yet</span>
+          <span>${this.searchQuery ? 'No matching conversations' : (this.filterSavedOnly ? 'No saved conversations' : 'No conversations yet')}</span>
         </div>
       `;
       return;
     }
 
-    const grouped = this.groupConversationsByDate(this.conversations);
+    const grouped = this.groupConversationsByDate(filtered);
 
     historyContainer.innerHTML = grouped.map(group => `
       <div class="history-group">
@@ -868,6 +882,39 @@ export const ChatEngine = {
       .replace(/>/g, '&gt;');
   },
 
+  renderPromptLibraryModal() {
+    const container = document.getElementById('promptLibCategories');
+    if (!container) return;
+
+    container.innerHTML = PROMPT_LIBRARY.map(cat => `
+      <div class="prompt-lib-cat-group">
+        <div class="prompt-lib-cat-title">${cat.category}</div>
+        <div class="prompt-lib-cards-grid">
+          ${cat.items.map(item => `
+            <div class="prompt-lib-card" data-prompt="${encodeURIComponent(item.prompt)}">
+              <div class="prompt-lib-card-title">${item.title}</div>
+              <div class="prompt-lib-card-snippet">${item.prompt}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.prompt-lib-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const promptText = decodeURIComponent(card.dataset.prompt);
+        UI.closeModal('promptLibraryModal');
+        const textarea = document.getElementById('composerTextarea');
+        if (textarea) {
+          textarea.value = promptText;
+          UI.adjustTextareaHeight(textarea);
+          this.updateSendButtonState();
+          textarea.focus();
+        }
+      });
+    });
+  },
+
   bindEvents() {
     const btnNewChat = document.getElementById('btnNewChat');
     if (btnNewChat) {
@@ -879,6 +926,128 @@ export const ChatEngine = {
       btnClearChat.addEventListener('click', () => this.startNewChat());
     }
 
+    // Search Chats Filter
+    const searchInput = document.getElementById('sidebarSearchInput');
+    const clearSearchBtn = document.getElementById('btnClearSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this.searchQuery = e.target.value.trim();
+        if (clearSearchBtn) {
+          clearSearchBtn.classList.toggle('hidden', !this.searchQuery);
+        }
+        this.renderSidebarHistory();
+      });
+    }
+    if (clearSearchBtn && searchInput) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        this.searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        this.renderSidebarHistory();
+        searchInput.focus();
+      });
+    }
+
+    // Toggle Saved Filter
+    const btnFilterSaved = document.getElementById('btnToggleFilterSaved');
+    if (btnFilterSaved) {
+      btnFilterSaved.addEventListener('click', () => {
+        this.filterSavedOnly = !this.filterSavedOnly;
+        btnFilterSaved.classList.toggle('active', this.filterSavedOnly);
+        this.renderSidebarHistory();
+        UI.showToast(this.filterSavedOnly ? 'Showing saved conversations' : 'Showing all conversations');
+      });
+    }
+
+    // AI Workspace Tools in Sidebar
+    document.querySelectorAll('.sidebar-tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tool = btn.dataset.tool;
+        if (tool === 'document') {
+          const fileInput = document.getElementById('fileInput');
+          if (fileInput) fileInput.click();
+        } else if (tool === 'research') {
+          const webBtn = document.getElementById('btnToggleWebSearch');
+          if (webBtn && !this.isWebSearchActive) webBtn.click();
+          const textarea = document.getElementById('composerTextarea');
+          if (textarea) {
+            textarea.value = "Conduct a deep research overview on ";
+            UI.adjustTextareaHeight(textarea);
+            textarea.focus();
+          }
+        } else if (tool === 'coding') {
+          const textarea = document.getElementById('composerTextarea');
+          if (textarea) {
+            textarea.value = "Write high-performance code to ";
+            UI.adjustTextareaHeight(textarea);
+            textarea.focus();
+          }
+        } else if (tool === 'agents') {
+          const textarea = document.getElementById('composerTextarea');
+          if (textarea) {
+            textarea.value = "Act as an autonomous AI agent to ";
+            UI.adjustTextareaHeight(textarea);
+            textarea.focus();
+          }
+        }
+      });
+    });
+
+    // Prompt Library Triggers
+    const openLibBtns = [document.getElementById('btnOpenPromptLibrary'), document.getElementById('btnNavbarPromptLibrary')];
+    openLibBtns.forEach(btn => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          this.renderPromptLibraryModal();
+          UI.openModal('promptLibraryModal');
+        });
+      }
+    });
+
+    const closeLibBtn = document.getElementById('btnClosePromptLibrary');
+    if (closeLibBtn) {
+      closeLibBtn.addEventListener('click', () => UI.closeModal('promptLibraryModal'));
+    }
+
+    // Web Research Mode Toggle
+    const btnToggleWeb = document.getElementById('btnToggleWebSearch');
+    if (btnToggleWeb) {
+      btnToggleWeb.addEventListener('click', () => {
+        this.isWebSearchActive = !this.isWebSearchActive;
+        btnToggleWeb.classList.toggle('active', this.isWebSearchActive);
+        UI.showToast(this.isWebSearchActive ? 'Web Research mode enabled 🌐' : 'Standard reasoning mode');
+      });
+    }
+
+    // AI Model Selector / Switcher
+    const models = [
+      { id: 'nexus-orchid', name: 'Nexus Orchid 4.5', pill: '⚡ Orchid 4.5' },
+      { id: 'claude-35', name: 'Claude 3.5 Sonnet', pill: '✦ Sonnet 3.5' },
+      { id: 'gpt-4o', name: 'GPT-4o Omni', pill: '◈ GPT-4o' },
+      { id: 'nexus-reason', name: 'Deep Reasoning Matrix', pill: '🧠 Reasoning' }
+    ];
+    let currentModelIdx = 0;
+    const btnComposerModel = document.getElementById('btnComposerModel');
+    const badgeModelNavbar = document.getElementById('modelSelectorBadge');
+    const navChatTitle = document.getElementById('navbarChatTitle');
+
+    const cycleModel = () => {
+      currentModelIdx = (currentModelIdx + 1) % models.length;
+      const m = models[currentModelIdx];
+      this.selectedModel = m.id;
+      if (btnComposerModel) {
+        btnComposerModel.innerHTML = `<span class="tool-model-pill">${m.pill}</span>`;
+      }
+      if (navChatTitle && !this.activeChatId) {
+        navChatTitle.textContent = m.name;
+      }
+      UI.showToast(`Switched reasoning engine to ${m.name}`);
+    };
+
+    if (btnComposerModel) btnComposerModel.addEventListener('click', cycleModel);
+    if (badgeModelNavbar) badgeModelNavbar.addEventListener('click', cycleModel);
+
+    // Textarea & Composer Events
     const textarea = document.getElementById('composerTextarea');
     if (textarea) {
       textarea.addEventListener('input', () => {
@@ -920,6 +1089,14 @@ export const ChatEngine = {
 
     if (btnRemoveAttachment) {
       btnRemoveAttachment.addEventListener('click', () => this.clearAttachment());
+    }
+
+    // Voice Mock Button
+    const btnVoice = document.getElementById('btnVoiceMock');
+    if (btnVoice) {
+      btnVoice.addEventListener('click', () => {
+        UI.showToast('Voice mode ready. Speak your prompt...', '🎙️');
+      });
     }
   }
 };

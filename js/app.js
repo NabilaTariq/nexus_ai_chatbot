@@ -193,11 +193,7 @@ function bindGlobalEvents() {
   if (btnClearAllHistory) {
     btnClearAllHistory.addEventListener('click', () => {
       if (confirm('Are you sure you want to clear all conversation history?')) {
-        ChatEngine.chatHistories = [
-          { group: "Today", items: [] },
-          { group: "Yesterday", items: [] },
-          { group: "Previous 7 Days", items: [] }
-        ];
+        ChatEngine.conversations = [];
         ChatEngine.renderSidebarHistory();
         ChatEngine.startNewChat();
         UI.closeModal('settingsModal');

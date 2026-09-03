@@ -1,96 +1,101 @@
 /* ==========================================================================
-   Design Tokens & CSS Variables - Nexus AI
-   Brand Palette:
-   - Primary Dark Burgundy: #2e0003
-   - Warm Brown: #210b0f
-   - Light Cream: #efefef
+   Design Tokens & CSS Variables - Midnight Orchid Luxury AI Interface
+   Exact Brand Palette:
+   - Midnight Orchid:  #312A44 (Main Application Background & Base Canvas)
+   - Dusky Lilac:      #88700E (Secondary Surfaces, Warm Accents, Highlights)
+   - Iris Mist:        #BAB0C8 (Input Box Background with Dark Text)
+   - Plum Blossom:     #D7C5D6 (Cards & Panels with Transparency/Glass Effect)
+   - Silver Wisteria:  #DAD4DF (Primary/Secondary Text & Borders)
+   - Pure White:       #FFFFFF (Headers & High-Contrast Accents)
    ========================================================================== */
 
 :root {
   /* Exact Signature Brand Palette */
-  --brand-burgundy: #2e0003;
-  --brand-brown: #210b0f;
-  --brand-cream: #efefef;
+  --orchid-midnight: #312A44;
+  --orchid-dusky-lilac: #88700E;
+  --orchid-iris-mist: #BAB0C8;
+  --orchid-plum-blossom: #D7C5D6;
+  --orchid-silver-wisteria: #DAD4DF;
+  --color-white: #FFFFFF;
 
-  /* Tonal Derivatives & Accents */
-  --brand-burgundy-deep: #1e0002;
-  --brand-burgundy-glow: #48060c;
-  --brand-burgundy-light: #520911;
-  --brand-brown-elevated: #2d1016;
-  --brand-brown-hover: #38151c;
-  --brand-brown-border: rgba(239, 239, 239, 0.08);
+  /* Tonal Derivatives & Surfaces */
+  --bg-primary: #312A44;                  /* Main Canvas: Midnight Orchid */
+  --bg-secondary: #1F1A2D;                /* Sidebar: Darker Orchid Gradient Base */
+  --bg-sidebar-gradient: linear-gradient(180deg, #1C1729 0%, #262035 50%, #191425 100%);
+  --bg-tertiary: #272138;                 /* Elevated Dark Orchid */
+  --bg-elevated: #3D3455;                 /* Hover state for dark panels */
+  
+  /* Plum Blossom Glassmorphic Panels */
+  --panel-glass-bg: rgba(215, 197, 214, 0.08);
+  --panel-glass-border: rgba(215, 197, 214, 0.16);
+  --panel-glass-hover: rgba(215, 197, 214, 0.14);
+  --panel-glass-glow: 0 8px 32px 0 rgba(18, 14, 28, 0.45);
 
-  --cream-pure: #ffffff;
-  --cream-primary: #efefef;
-  --cream-secondary: #d4ccce;
-  --cream-muted: #9c8e91;
-  --cream-dim: #6e6164;
-  --cream-border-subtle: rgba(239, 239, 239, 0.08);
-  --cream-border-medium: rgba(239, 239, 239, 0.16);
-  --cream-border-highlight: rgba(239, 239, 239, 0.32);
-
-  /* Dark Theme (Default Luxury Aesthetic) */
-  --bg-primary: #2e0003;                /* Main Viewport Burgundy */
-  --bg-secondary: #210b0f;              /* Sidebar & Secondary Panels Warm Brown */
-  --bg-tertiary: #270e13;               /* Cards & Input Backgrounds */
-  --bg-elevated: #33131a;               /* Hover & Active surfaces */
-  --bg-hover: rgba(239, 239, 239, 0.06);
-  --bg-active: rgba(239, 239, 239, 0.12);
-  --bg-glass: rgba(33, 11, 15, 0.78);
-  --bg-glass-card: rgba(33, 11, 15, 0.65);
-  --bg-glass-border: rgba(239, 239, 239, 0.1);
-  --bg-glass-blur: blur(20px);
+  /* Iris Mist Input Area Tokens */
+  --input-bg: #BAB0C8;                    /* Iris Mist background */
+  --input-text: #1C1729;                  /* Dark text on Iris Mist */
+  --input-placeholder: rgba(28, 23, 41, 0.6);
+  --input-border: rgba(218, 212, 223, 0.5);
+  --input-tool-hover: rgba(28, 23, 41, 0.12);
+  --input-tool-active: rgba(28, 23, 41, 0.2);
+  --input-tool-text: #1C1729;
 
   /* Typography Colors */
-  --text-primary: #efefef;              /* Crisp Light Cream */
-  --text-secondary: #d4ccce;            /* Soft Muted Cream */
-  --text-muted: #9c8e91;                /* Dim Warm Metadata */
-  --text-accent: #efefef;
-  --text-inverse: #210b0f;              /* Dark text on light buttons */
+  --text-primary: #FFFFFF;                /* Pure White for high-contrast headers */
+  --text-secondary: #DAD4DF;              /* Silver Wisteria for copy */
+  --text-muted: #A89EB5;                  /* Muted Wisteria for timestamps & subtext */
+  --text-accent: #D7C5D6;                 /* Plum Blossom for accents */
+  --text-gold: #D4AF37;                   /* Warm luxury accent tuned with #88700E */
+
+  /* Dusky Lilac Accents */
+  --accent-dusky: #88700E;
+  --accent-dusky-hover: #A08512;
+  --accent-dusky-glow: rgba(136, 112, 14, 0.35);
+  --accent-dusky-bg: rgba(136, 112, 14, 0.18);
+  --accent-dusky-border: rgba(136, 112, 14, 0.4);
 
   /* Gradients */
-  --gradient-burgundy-brown: linear-gradient(145deg, #2e0003 0%, #210b0f 100%);
-  --gradient-card: linear-gradient(135deg, rgba(46, 0, 3, 0.5) 0%, rgba(33, 11, 15, 0.85) 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(239, 239, 239, 0.05) 0%, rgba(239, 239, 239, 0.01) 100%);
-  --gradient-cream-btn: linear-gradient(135deg, #ffffff 0%, #efefef 60%, #ded7d8 100%);
-  --gradient-accent-glow: radial-gradient(circle, rgba(168, 28, 45, 0.22) 0%, transparent 70%);
+  --gradient-orchid: linear-gradient(135deg, #312A44 0%, #443A5F 50%, #262035 100%);
+  --gradient-plum-glass: linear-gradient(135deg, rgba(215, 197, 214, 0.14) 0%, rgba(215, 197, 214, 0.05) 100%);
+  --gradient-wisteria-text: linear-gradient(135deg, #FFFFFF 0%, #DAD4DF 70%, #BAB0C8 100%);
+  --gradient-button-send: linear-gradient(135deg, #312A44 0%, #1F1A2D 100%);
 
   /* Message Bubbles */
-  --bubble-user-bg: #270e13;
-  --bubble-user-text: #ffffff;
-  --bubble-user-border: rgba(239, 239, 239, 0.16);
+  --bubble-user-bg: #262038;
+  --bubble-user-text: #FFFFFF;
+  --bubble-user-border: rgba(215, 197, 214, 0.2);
 
-  --bubble-ai-bg: rgba(33, 11, 15, 0.85);
-  --bubble-ai-text: #efefef;
-  --bubble-ai-border: rgba(239, 239, 239, 0.09);
+  --bubble-ai-bg: rgba(215, 197, 214, 0.08);
+  --bubble-ai-text: #DAD4DF;
+  --bubble-ai-border: rgba(218, 212, 223, 0.14);
 
   /* Code Block System */
-  --code-bg: #140507;
-  --code-header-bg: #1e090c;
-  --code-text: #efefef;
-  --code-border: rgba(239, 239, 239, 0.08);
-  --code-keyword: #e8a0ad;
-  --code-string: #f2c49b;
-  --code-comment: #7d6b6e;
-  --code-fn: #efefef;
-  --code-num: #e0b084;
+  --code-bg: #171322;
+  --code-header-bg: #211B30;
+  --code-text: #DAD4DF;
+  --code-border: rgba(218, 212, 223, 0.12);
+  --code-keyword: #D7C5D6;
+  --code-string: #C8D6AF;
+  --code-comment: #7E758C;
+  --code-fn: #BAB0C8;
+  --code-num: #F2C49B;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(239, 239, 239, 0.08);
-  --border-medium: rgba(239, 239, 239, 0.15);
-  --border-focus: #efefef;
-  --border-glow: rgba(239, 239, 239, 0.25);
+  --border-subtle: rgba(218, 212, 223, 0.1);
+  --border-medium: rgba(218, 212, 223, 0.2);
+  --border-highlight: rgba(215, 197, 214, 0.35);
+  --border-focus: #DAD4DF;
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
-  --shadow-glow: 0 0 25px rgba(239, 239, 239, 0.12);
-  --shadow-burgundy-glow: 0 0 35px rgba(138, 14, 28, 0.35);
-  --shadow-composer: 0 12px 48px rgba(10, 0, 2, 0.85);
+  --shadow-sm: 0 2px 8px rgba(18, 14, 28, 0.35);
+  --shadow-md: 0 8px 24px rgba(18, 14, 28, 0.45);
+  --shadow-lg: 0 16px 44px rgba(14, 10, 22, 0.65);
+  --shadow-glow-orchid: 0 0 30px rgba(68, 58, 95, 0.4);
+  --shadow-glow-wisteria: 0 0 20px rgba(218, 212, 223, 0.2);
+  --shadow-composer: 0 12px 48px rgba(14, 10, 22, 0.65);
 
   /* Typography */
-  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Manrope', 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
 
   --font-size-xs: 0.75rem;     /* 12px */
@@ -99,10 +104,10 @@
   --font-size-md: 1rem;        /* 16px */
   --font-size-lg: 1.125rem;    /* 18px */
   --font-size-xl: 1.35rem;     /* 21.6px */
-  --font-size-2xl: 1.75rem;    /* 28px */
-  --font-size-3xl: 2.35rem;    /* 37.6px */
+  --font-size-2xl: 1.85rem;    /* 29.6px */
+  --font-size-3xl: 2.5rem;     /* 40px */
 
-  --line-height-tight: 1.25;
+  --line-height-tight: 1.22;
   --line-height-normal: 1.55;
   --line-height-relaxed: 1.7;
 
@@ -130,53 +135,46 @@
   --transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Layout */
-  --sidebar-width: 290px;
+  --sidebar-width: 300px;
   --header-height: 64px;
-  --max-chat-width: 860px;
+  --max-chat-width: 880px;
 }
 
-/* Light / Warm Cream Elegance Theme (Retaining brand integrity) */
+/* Light Mode / Soft Wisteria Theme */
 [data-theme="light"] {
-  --bg-primary: #f5f2f2;
-  --bg-secondary: #eae4e5;
-  --bg-tertiary: #dfd6d8;
-  --bg-elevated: #d3c7ca;
-  --bg-hover: rgba(46, 0, 3, 0.06);
-  --bg-active: rgba(46, 0, 3, 0.12);
-  --bg-glass: rgba(245, 242, 242, 0.88);
-  --bg-glass-card: rgba(234, 228, 229, 0.8);
-  --bg-glass-border: rgba(46, 0, 3, 0.1);
+  --bg-primary: #EDE8F2;
+  --bg-secondary: #DFD7E7;
+  --bg-sidebar-gradient: linear-gradient(180deg, #E2DAEB 0%, #D8CEE3 100%);
+  --bg-tertiary: #D2C6DE;
+  --bg-elevated: #C5B6D4;
+  
+  --panel-glass-bg: rgba(255, 255, 255, 0.65);
+  --panel-glass-border: rgba(49, 42, 68, 0.12);
+  --panel-glass-hover: rgba(255, 255, 255, 0.85);
 
-  --text-primary: #210b0f;
-  --text-secondary: #4a272e;
-  --text-muted: #785a61;
-  --text-accent: #2e0003;
-  --text-inverse: #efefef;
+  --input-bg: #FFFFFF;
+  --input-text: #312A44;
+  --input-placeholder: #7E758C;
+  --input-border: rgba(49, 42, 68, 0.2);
 
-  --gradient-burgundy-brown: linear-gradient(145deg, #eae4e5 0%, #dfd6d8 100%);
-  --gradient-card: linear-gradient(135deg, rgba(245, 242, 242, 0.9) 0%, rgba(234, 228, 229, 0.9) 100%);
-  --gradient-cream-btn: linear-gradient(135deg, #2e0003 0%, #210b0f 100%);
+  --text-primary: #1C1729;
+  --text-secondary: #312A44;
+  --text-muted: #6B617A;
+  --text-accent: #312A44;
 
-  --bubble-user-bg: #2e0003;
-  --bubble-user-text: #efefef;
-  --bubble-user-border: rgba(46, 0, 3, 0.2);
+  --bubble-user-bg: #312A44;
+  --bubble-user-text: #FFFFFF;
+  --bubble-user-border: rgba(49, 42, 68, 0.2);
 
-  --bubble-ai-bg: #ffffff;
-  --bubble-ai-text: #210b0f;
-  --bubble-ai-border: rgba(46, 0, 3, 0.08);
+  --bubble-ai-bg: #FFFFFF;
+  --bubble-ai-text: #312A44;
+  --bubble-ai-border: rgba(49, 42, 68, 0.1);
 
-  --code-bg: #210b0f;
-  --code-header-bg: #2e0003;
-  --code-text: #efefef;
-  --code-border: rgba(46, 0, 3, 0.15);
+  --code-bg: #211B30;
+  --code-header-bg: #312A44;
+  --code-text: #DAD4DF;
 
-  --border-subtle: rgba(46, 0, 3, 0.08);
-  --border-medium: rgba(46, 0, 3, 0.16);
-  --border-focus: #2e0003;
-  --border-glow: rgba(46, 0, 3, 0.25);
-
-  --shadow-sm: 0 2px 8px rgba(33, 11, 15, 0.06);
-  --shadow-md: 0 8px 20px rgba(33, 11, 15, 0.1);
-  --shadow-lg: 0 16px 36px rgba(33, 11, 15, 0.14);
-  --shadow-composer: 0 12px 36px rgba(33, 11, 15, 0.12);
+  --border-subtle: rgba(49, 42, 68, 0.1);
+  --border-medium: rgba(49, 42, 68, 0.18);
+  --border-focus: #312A44;
 }
