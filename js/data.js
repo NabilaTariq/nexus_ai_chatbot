@@ -1,38 +1,37 @@
 /**
  * Knowledge Base & Preset Prompt Cards for Nexus AI
- * Palette: Navy (#1F2A44), Warm Beige (#E8DCC8), Soft Gold (#C6A75E)
+ * Brand Palette: Burgundy (#2e0003), Warm Brown (#210b0f), Light Cream (#efefef)
  */
 
-// Clean initial chat history without dummy data
 export const INITIAL_CHAT_HISTORY = [];
 
 export const PROMPT_CARDS = [
   {
+    id: "architecture",
+    icon: "⚡",
+    title: "Architect a Scalable System",
+    desc: "Design distributed, fault-tolerant cloud services with clean event flow",
+    prompt: "Design a high-throughput, fault-tolerant microservices architecture with event-driven message queuing"
+  },
+  {
     id: "quantum",
     icon: "⚛️",
-    title: "Explain quantum physics simply",
-    desc: "Break down complex subatomic rules into clear analogies",
-    prompt: "Explain quantum physics simply"
+    title: "Synthesize Quantum Concepts",
+    desc: "Deconstruct subatomic principles and entanglement with intuitive analogies",
+    prompt: "Explain quantum physics and quantum entanglement simply with real-world mental models"
   },
   {
-    id: "python",
+    id: "strategy",
+    icon: "📊",
+    title: "Formulate Strategic Brief",
+    desc: "Conduct executive-level analysis on technological shifts and competitive moats",
+    prompt: "Formulate an executive strategic brief on the impact of autonomous AI agents in enterprise workflows"
+  },
+  {
+    id: "code-matrix",
     icon: "💻",
-    title: "Write a Python program",
-    desc: "Generate clean, modern code with best practices",
-    prompt: "Write a Python program for web scraping with httpx and BeautifulSoup"
-  },
-  {
-    id: "day-plan",
-    icon: "📅",
-    title: "Help me plan my day",
-    desc: "Create a focused deep-work schedule for maximum productivity",
-    prompt: "Help me plan my day with a high-performance routine"
-  },
-  {
-    id: "ai-info",
-    icon: "🧠",
-    title: "Tell me about artificial intelligence",
-    desc: "Explore neural networks, foundation models, and agents",
-    prompt: "Tell me about artificial intelligence and modern neural networks"
+    title: "Develop Modern Python Script",
+    desc: "Generate production-ready asynchronous Python code with best practices",
+    prompt: "Write an asynchronous Python application using asyncio, httpx, and structured pydantic schemas"
   }
 ];

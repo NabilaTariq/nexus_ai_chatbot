@@ -1,6 +1,9 @@
 /* ==========================================================================
-   Composer / Message Input Bar - Nexus AI
-   Palette: Navy (#1F2A44), Warm Beige (#E8DCC8), Soft Gold (#C6A75E)
+   Composer / Message Input Command Center - Nexus AI
+   Brand Palette:
+   - Command Surface: #210b0f (Warm Brown Glass)
+   - Accents & Highlights: #efefef (Light Cream)
+   - Base Canvas: #2e0003 (Primary Dark Burgundy)
    ========================================================================== */
 
 .composer-section {
@@ -11,8 +14,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 var(--space-4) var(--space-3);
-  background: linear-gradient(180deg, transparent 0%, var(--bg-primary) 35%);
+  padding: 0 var(--space-4) var(--space-4);
+  background: linear-gradient(180deg, transparent 0%, rgba(46, 0, 3, 0.85) 30%, var(--bg-primary) 100%);
   z-index: 30;
   pointer-events: none;
 }
@@ -29,12 +32,12 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-2);
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: var(--bg-secondary);
-  border: 1px solid var(--border-gold);
+  border: 1px solid var(--cream-border-medium);
   border-radius: var(--radius-md);
   width: fit-content;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -47,32 +50,35 @@
   align-items: center;
   gap: var(--space-2);
   font-size: var(--font-size-xs);
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .attachment-chip svg {
-  color: var(--palette-gold);
+  color: var(--cream-primary);
 }
 
 .btn-remove-attachment {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  color: var(--text-muted);
+  color: var(--cream-muted);
 }
 
 .btn-remove-attachment:hover {
   background: var(--bg-elevated);
-  color: #ef4444;
+  color: #f87171;
 }
 
-/* Main Composer Card */
+/* Main Command Dock Card */
 .composer-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-medium);
+  background: rgba(33, 11, 15, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--cream-border-medium);
   border-radius: var(--radius-xl);
-  padding: var(--space-3) var(--space-4);
-  box-shadow: var(--shadow-composer);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-composer), inset 0 1px 1px rgba(239, 239, 239, 0.08);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -80,8 +86,8 @@
 }
 
 .composer-card:focus-within {
-  border-color: var(--border-focus);
-  box-shadow: var(--shadow-composer), var(--shadow-gold);
+  border-color: var(--cream-border-highlight);
+  box-shadow: var(--shadow-composer), 0 0 20px rgba(239, 239, 239, 0.1);
 }
 
 /* Textarea Input */
@@ -94,19 +100,20 @@
 
 .composer-textarea {
   width: 100%;
-  min-height: 24px;
+  min-height: 26px;
   max-height: 180px;
   resize: none;
   background: transparent;
   color: var(--text-primary);
   font-size: var(--font-size-base);
   line-height: 1.5;
-  padding: 4px 0;
+  padding: 3px 0;
   overflow-y: auto;
 }
 
 .composer-textarea::placeholder {
-  color: var(--text-muted);
+  color: var(--cream-muted);
+  font-weight: 400;
 }
 
 /* Composer Bottom Toolbar (Actions + Send Button) */
@@ -114,7 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-2);
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
 }
 
@@ -125,29 +132,36 @@
 }
 
 .btn-tool {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
-  color: var(--text-secondary);
+  font-weight: 500;
+  color: var(--cream-secondary);
   border: 1px solid transparent;
   gap: 6px;
   background: transparent;
+  transition: all var(--transition-fast);
 }
 
 .btn-tool:hover {
   background: var(--bg-hover);
-  color: var(--palette-gold);
-  border-color: var(--border-subtle);
+  color: var(--cream-pure);
+  border-color: var(--cream-border-subtle);
 }
 
 .btn-tool svg {
-  color: var(--text-gold);
+  color: var(--cream-muted);
+  transition: color var(--transition-fast);
+}
+
+.btn-tool:hover svg {
+  color: var(--cream-pure);
 }
 
 .btn-tool.active {
-  background: rgba(198, 167, 94, 0.15);
-  color: var(--palette-gold);
-  border-color: var(--border-gold);
+  background: rgba(239, 239, 239, 0.12);
+  color: var(--cream-pure);
+  border-color: var(--cream-border-medium);
 }
 
 .composer-tools-right {
@@ -158,8 +172,13 @@
 
 .key-hint {
   font-size: 0.7rem;
-  color: var(--text-muted);
-  display: none; /* Shown on desktop hover */
+  color: var(--cream-muted);
+  display: none;
+}
+
+.key-hint strong {
+  color: var(--cream-secondary);
+  font-weight: 600;
 }
 
 @media (min-width: 900px) {
@@ -170,39 +189,41 @@
 
 /* Send Button */
 .btn-send {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-lg);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
   background: var(--bg-elevated);
-  color: var(--text-muted);
+  color: var(--cream-muted);
   border: 1px solid var(--border-subtle);
   transition: all var(--transition-fast);
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-send.active {
-  background: var(--palette-gold);
-  color: var(--palette-navy);
-  border-color: var(--palette-gold);
-  box-shadow: var(--shadow-gold), 0 0 14px rgba(198, 167, 94, 0.45);
+  background: var(--gradient-cream-btn);
+  color: var(--brand-brown);
+  border-color: #ffffff;
+  box-shadow: 0 0 18px rgba(239, 239, 239, 0.45);
   cursor: pointer;
   transform: scale(1.02);
 }
 
 .btn-send.active:hover {
-  background: var(--accent-gold-hover);
+  background: #ffffff;
   transform: scale(1.06);
+  box-shadow: 0 0 22px rgba(239, 239, 239, 0.6);
 }
 
 .btn-send.loading {
   background: var(--bg-elevated);
-  color: var(--palette-gold);
-  border-color: var(--border-gold);
+  color: var(--cream-primary);
+  border-color: var(--cream-border-medium);
   pointer-events: none;
 }
 
 .btn-send.loading svg {
-  animation: spin 1s linear infinite;
+  animation: spin 0.9s linear infinite;
 }
 
 /* Hidden File Input */
@@ -213,18 +234,9 @@
 /* Footer Disclaimer */
 .composer-disclaimer {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--cream-dim);
   text-align: center;
   margin-top: var(--space-2);
   padding: 0 var(--space-2);
   letter-spacing: 0.01em;
-}
-
-.composer-disclaimer a {
-  color: var(--text-gold);
-  text-decoration: none;
-}
-
-.composer-disclaimer a:hover {
-  text-decoration: underline;
 }

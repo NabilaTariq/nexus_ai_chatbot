@@ -1,8 +1,12 @@
 /* ==========================================================================
    Responsive Breakpoints & Layout Adaptations - Nexus AI
+   Brand Palette:
+   - Primary Dark Burgundy: #2e0003
+   - Warm Brown: #210b0f
+   - Light Cream: #efefef
    ========================================================================== */
 
-/* Tablet & Mobile Screens (< 1024px) */
+/* Tablet & Smaller Laptops (< 1024px) */
 @media (max-width: 1024px) {
   :root {
     --sidebar-width: 260px;
@@ -10,9 +14,9 @@
   }
 
   .chat-scroll-container {
-    padding-left: var(--space-3);
-    padding-right: var(--space-3);
-    padding-bottom: 170px;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    padding-bottom: 180px;
   }
 }
 
@@ -20,7 +24,7 @@
 @media (max-width: 768px) {
   :root {
     --sidebar-width: 290px;
-    --header-height: 56px;
+    --header-height: 58px;
   }
 
   /* Off-canvas mobile drawer */
@@ -31,7 +35,7 @@
     bottom: 0;
     height: 100vh;
     transform: translateX(-100%);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.7);
     z-index: 100;
   }
 
@@ -48,13 +52,28 @@
   /* Welcome Screen Mobile */
   .welcome-screen {
     padding: var(--space-4) var(--space-2);
-    min-height: calc(100vh - var(--header-height) - 160px);
+    min-height: calc(100vh - var(--header-height) - 170px);
   }
 
   .welcome-crest {
-    width: 58px;
-    height: 58px;
+    width: 64px;
+    height: 64px;
     margin-bottom: var(--space-4);
+  }
+
+  .crest-ring-outer {
+    width: 86px;
+    height: 86px;
+  }
+
+  .crest-ring-inner {
+    width: 76px;
+    height: 76px;
+  }
+
+  .welcome-crest svg {
+    width: 32px;
+    height: 32px;
   }
 
   .welcome-title {
@@ -73,7 +92,7 @@
   }
 
   .prompt-card {
-    padding: var(--space-3);
+    padding: var(--space-3) var(--space-4);
   }
 
   /* Message Rows */
@@ -82,14 +101,14 @@
   }
 
   .message-avatar {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     font-size: 0.7rem;
   }
 
   .user-message-bubble,
   .assistant-message-bubble {
-    padding: var(--space-3);
+    padding: 12px 14px;
     font-size: var(--font-size-sm);
   }
 
@@ -99,7 +118,7 @@
   }
 
   .composer-card {
-    padding: var(--space-2) var(--space-3);
+    padding: 10px 14px;
     border-radius: var(--radius-lg);
   }
 
@@ -149,6 +168,10 @@
   }
   
   .navbar-right .btn-nav-action span {
+    display: none;
+  }
+
+  .model-tier-badge {
     display: none;
   }
 

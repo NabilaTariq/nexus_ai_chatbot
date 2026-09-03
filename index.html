@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Nexus AI - A sophisticated, high-performance conversational intelligence interface designed with elegance and precision.">
-  <title>Nexus AI — Intelligent Assistant</title>
+  <meta name="description" content="Nexus AI — High-caliber conversational intelligence and executive AI platform engineered for precision, reasoning, and workflow synthesis.">
+  <title>Nexus AI — Executive Conversational Intelligence</title>
   
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Modular CSS Stylesheets -->
   <link rel="stylesheet" href="css/variables.css">
@@ -25,20 +25,25 @@
   <!-- Root App Shell -->
   <div class="app-container" id="appContainer">
 
+    <!-- Atmospheric Ambient Background Light -->
+    <div class="ambient-glow ambient-glow-1" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-2" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-3" aria-hidden="true"></div>
+
     <!-- Mobile Sidebar Backdrop Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- ======================================================================
-         LEFT SIDEBAR
+         LEFT SIDEBAR (Warm Brown Glass Panel)
          ====================================================================== -->
     <aside class="sidebar" id="sidebar" aria-label="Chat sidebar">
       
       <!-- App Brand Logo / Header -->
       <div class="sidebar-header">
-        <a href="#" class="brand-logo" title="Nexus AI Assistant">
+        <a href="#" class="brand-logo" title="Nexus AI Platform">
           <div class="brand-icon-wrapper">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
             </svg>
           </div>
           <div class="brand-title">
@@ -96,7 +101,7 @@
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
-            <span>Settings</span>
+            <span>Preferences</span>
           </button>
         </nav>
       </div>
@@ -104,7 +109,7 @@
     </aside>
 
     <!-- ======================================================================
-         MAIN CHAT VIEWPORT
+         MAIN CHAT VIEWPORT (Primary Dark Burgundy Background)
          ====================================================================== -->
     <main class="main-chat" id="mainChat">
       
@@ -119,10 +124,11 @@
             </svg>
           </button>
 
-          <div class="model-selector" id="modelSelectorBadge" title="Current AI Engine">
+          <div class="model-selector" id="modelSelectorBadge" title="Executive Neural Engine">
             <span class="model-dot"></span>
-            <span id="navbarChatTitle">Nexus 4.0 Pro</span>
-            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <span id="navbarChatTitle">Nexus 4.5 Turbo</span>
+            <span class="model-tier-badge">PRO</span>
+            <svg class="icon-sm chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
@@ -136,7 +142,7 @@
             </svg>
             <span>Clear</span>
           </button>
-          <button class="btn-nav-action" id="btnThemeToggle" title="Toggle Dark/Light Mode">
+          <button class="btn-nav-action" id="btnThemeToggle" title="Toggle Aesthetic Mode">
             <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -159,17 +165,33 @@
           
           <!-- Clean Welcome Screen (Empty State) -->
           <section class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-badge">
+              <span class="pulse-dot"></span>
+              <span>Executive Neural Assistant</span>
+            </div>
+
             <div class="welcome-crest">
+              <div class="crest-ring crest-ring-outer"></div>
+              <div class="crest-ring crest-ring-inner"></div>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
               </svg>
             </div>
-            <h1 class="welcome-title">How can <span>Nexus AI</span> assist you?</h1>
-            <p class="welcome-subtitle">Experience high-caliber reasoning, precise coding, and intelligent workflow optimization.</p>
+
+            <h1 class="welcome-title">How can <span class="text-gradient">Nexus AI</span> empower you?</h1>
+            <p class="welcome-subtitle">Experience precision reasoning, high-caliber code generation, and strategic intelligence syntheses.</p>
             
             <!-- Example Prompt Cards Grid -->
             <div class="prompt-grid" id="promptGrid">
               <!-- Rendered dynamically by js/chat.js -->
+            </div>
+
+            <!-- Quick Capabilities Chips -->
+            <div class="capabilities-bar">
+              <span class="capability-tag">⚡ Fast Inference</span>
+              <span class="capability-tag">🧠 Multi-turn Memory</span>
+              <span class="capability-tag">🛡️ Supabase Encrypted Sync</span>
+              <span class="capability-tag">💻 Code & Math Matrix</span>
             </div>
           </section>
 
@@ -185,7 +207,7 @@
       </div>
 
       <!-- ====================================================================
-           BOTTOM MESSAGE COMPOSER
+           BOTTOM MESSAGE COMPOSER (Floating Frosted Command Center)
            ==================================================================== -->
       <footer class="composer-section">
         <div class="composer-container">
@@ -207,7 +229,7 @@
               <textarea 
                 id="composerTextarea" 
                 class="composer-textarea" 
-                placeholder="Ask anything, formulate questions, or paste code..." 
+                placeholder="Ask anything, formulate complex questions, or paste code..." 
                 rows="1"
                 aria-label="Message prompt input"
               ></textarea>
@@ -248,7 +270,7 @@
 
           <!-- Bottom Disclaimer -->
           <div class="composer-disclaimer">
-            Nexus AI provides simulated intelligent outputs. Verify sensitive facts independently.
+            Nexus AI delivers high-performance synthetic intelligence. Verify critical domain data independently.
           </div>
 
         </div>
@@ -280,11 +302,11 @@
             <div class="settings-row">
               <div class="settings-info">
                 <span class="settings-label">Interface Theme</span>
-                <span class="settings-desc">Choose between Executive Dark and Warm Elegance Light</span>
+                <span class="settings-desc">Executive Burgundy Dark or Warm Cream Elegance</span>
               </div>
               <div class="theme-toggle-group">
-                <button class="theme-opt-btn active" data-theme="dark">Dark Navy</button>
-                <button class="theme-opt-btn" data-theme="light">Warm Beige</button>
+                <button class="theme-opt-btn active" data-theme="dark">Burgundy Dark</button>
+                <button class="theme-opt-btn" data-theme="light">Cream Light</button>
               </div>
             </div>
           </div>
@@ -298,9 +320,9 @@
                 <span class="settings-desc">Primary intelligence foundation</span>
               </div>
               <select class="settings-select" id="settingsModelSelect">
-                <option value="nexus-4">Nexus 4.0 Pro (Balanced)</option>
+                <option value="nexus-4">Nexus 4.5 Turbo (High Caliber)</option>
                 <option value="nexus-fast">Nexus Flash (Low Latency)</option>
-                <option value="nexus-reason">Nexus Deep Reasoning</option>
+                <option value="nexus-reason">Nexus Deep Reasoning Matrix</option>
               </select>
             </div>
           </div>
@@ -348,10 +370,10 @@
           <div class="modal-title" id="authModalTitle">
             <div class="brand-icon-wrapper" style="width: 28px; height: 28px;">
               <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
               </svg>
             </div>
-            <span>Nexus AI Intelligence</span>
+            <span>Nexus AI Platform</span>
           </div>
           <button class="btn-close-modal" id="btnCloseAuthModal" aria-label="Close authentication modal">✕</button>
         </div>

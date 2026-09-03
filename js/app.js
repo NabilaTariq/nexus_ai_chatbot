@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindGlobalEvents();
   bindAuthEvents();
 
-  console.log('✨ Nexus AI frontend initialized successfully with Navy & Warm Gold palette.');
+  console.log('✨ Nexus AI frontend initialized with Executive Burgundy & Cream palette.');
 });
 
 function bindAuthEvents() {
